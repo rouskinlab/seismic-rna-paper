@@ -14,14 +14,11 @@ fq_alias () {
         PLATE_NAME=$2
         DMS_NAME=dms-$3
         ALIAS_DIR=$PLATE_NAME
-        ALIAS_DIR=${PLATE_NAME}_small  #FIXME
         mkdir -p $ALIAS_DIR
         FQ_ALIAS=$ALIAS_DIR/${PLATE_NAME}_${DMS_NAME}_${MATE}.fastq.gz
-        FQ_ALIAS=$ALIAS_DIR/${PLATE_NAME}_${DMS_NAME}_${MATE}.fastq  #FIXME
         if [[ ! -f $FQ_ALIAS ]]; then
             FQ_SRR=${SRR}_${MATE}.fastq.gz
-            #ln $FQ_SRR $FQ_ALIAS  #FIXME
-            zcat $FQ_SRR | head -n 1000000 > $FQ_ALIAS || [[ $? -eq 141 ]]
+            ln $FQ_SRR $FQ_ALIAS
             echo "Wrote $FQ_ALIAS"
         fi
     done

@@ -192,23 +192,21 @@ def sim_fastq_pop(ct_file: Path, min_mut_gap: int, num_reads: int, num_cpus: int
 SIMS = list(range(60))
 REFLENS = [140, 280, 420]
 KS = [1, 2, 3, 4]
-REFLENS = [280]
-KS = [1]
-NUMS_READS = [#5000,
-              #10000,
-              #20000,
-              #50000,
-              #100000,
+NUMS_READS = [5000,
+              10000,
+              20000,
+              50000,
+              100000,
               200000]
 NUM_READS_POP = {
     0: 200000,
-    #2: 15000,
-    #3: 60000,
-    #4: 100000,
-    #5: 50000,
-    #6: 40000,
-    #7: 30000,
-    #8: 20000
+    2: 15000,
+    3: 60000,
+    4: 100000,
+    5: 50000,
+    6: 40000,
+    7: 30000,
+    8: 20000
 } 
 # The proportion of each population going into the biased sample was
 # calculated based on the data in parameterize/out-morandi-2021/pooled/
@@ -226,15 +224,15 @@ NUM_READS_POP = {
 #   8  950564   862010.306     1.102729   1.0        0.012775
 PROP_READS_SAMP = {
     "nobias": {0: 1.0},
-    #"biased": {0: 0.181527,
-    #           1: 0.000000,
-    #           2: 0.048523,
-    #           3: 0.205269,
-    #           4: 0.329878,
-    #           5: 0.100707,
-    #           6: 0.074163,
-    #           7: 0.047158,
-    #           8: 0.012775}
+    "biased": {0: 0.181527,
+               1: 0.000000,
+               2: 0.048523,
+               3: 0.205269,
+               4: 0.329878,
+               5: 0.100707,
+               6: 0.074163,
+               7: 0.047158,
+               8: 0.012775}
 }
 LINES_PER_READ = 4
 
@@ -349,7 +347,6 @@ def sim_fastq_jackpot(fastq_prefix: Path, r: int):
 
 
 def simulate(num_cpus: int):
-    """
     # Simulate reference sequences and structures.
     fastas_cts = dispatch(sim_params,
                           num_cpus=num_cpus,
@@ -419,7 +416,6 @@ def simulate(num_cpus: int):
     for fastqs_pop_dir in fastqs_pop_dirs:
         fastqs_pop_dir.rmdir()
         logger.action(f"Deleted {fastqs_pop_dir}")
-    """
     # Simulate the jackpotted FASTQ files.
     RS = [0, 2, 4, 6, 8, 10, 12]
     dispatch(sim_fastq_jackpot,

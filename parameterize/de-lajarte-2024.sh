@@ -21,32 +21,29 @@ for PLATE in {1..12}; do
     PLATE_NAME=mRNA_plate-$PLATE
     FA_FILE=$DATA_DIR/${PLATE_NAME}.fa
     SAMPLE_PREFIX=${PLATE_NAME}_dms-
-    #seismic align --num-cpus $CPUS -x $DATA_DIR/$PLATE_NAME -o $OUT_DIR $FA_FILE
-    #seismic relate --num-cpus $CPUS -o $OUT_DIR $FA_FILE $OUT_DIR/${SAMPLE_PREFIX}*
+    seismic align --num-cpus $CPUS -x $DATA_DIR/$PLATE_NAME -o $OUT_DIR $FA_FILE
+    seismic relate --num-cpus $CPUS -o $OUT_DIR $FA_FILE $OUT_DIR/${SAMPLE_PREFIX}*
     # List positions with excessive DMS reactivities (or insufficient coverage to determine) in the untreated sample.
-    #seismic -v list --num-cpus $CPUS --min-ninfo-pos 500 --max-fmut-pos 0.01 $OUT_DIR/${SAMPLE_PREFIX}ut
+    seismic -v list --num-cpus $CPUS --min-ninfo-pos 500 --max-fmut-pos 0.01 $OUT_DIR/${SAMPLE_PREFIX}ut
     # Graph profiles of the DMS-treated replicates and the untreated control.
-    #seismic -v graph profile --num-cpus $CPUS --no-html $OUT_DIR/${SAMPLE_PREFIX}*/relate
-    #seismic -v graph profile --num-cpus $CPUS -r n --use-count --no-html $OUT_DIR/${SAMPLE_PREFIX}*/relate
+    seismic -v graph profile --num-cpus $CPUS --no-html $OUT_DIR/${SAMPLE_PREFIX}*/relate
+    seismic -v graph profile --num-cpus $CPUS -r n --use-count --no-html $OUT_DIR/${SAMPLE_PREFIX}*/relate
     # Compare the DMS-treated replicates A and B (if both exist).
-    #seismic -v graph scatter --num-cpus $CPUS --no-html -o $OUT_DIR $OUT_DIR/${SAMPLE_PREFIX}[ab]/relate
+    seismic -v graph scatter --num-cpus $CPUS --no-html -o $OUT_DIR $OUT_DIR/${SAMPLE_PREFIX}[ab]/relate
     # Pool the DMS-treated replicates A and B for references with untreated controls.
     POOLED_SAMPLE=${SAMPLE_PREFIX}pool
     for REF_DIR in $OUT_DIR/${SAMPLE_PREFIX}ut/relate/*; do
         REF=$(basename $REF_DIR)
         if [[ ! -f $OUT_DIR/$POOLED_SAMPLE/relate/$REF/relate-report.json ]]; then
             # Confirm that replicates A and B exist and have sufficient correlation.
-            
-            #SCATTER=$OUT_DIR/${SAMPLE_PREFIX}a_VS_${SAMPLE_PREFIX}b/graph/$REF/full/scatter_all_m-ratio-q0.csv
-            #if [[ -f $SCATTER ]]; then
-            #    SUFFICIENT=$(python check_pearson.py $SCATTER 0.9)
-            #    if [[ $SUFFICIENT -eq 1 ]]; then
-            #        echo $SUFFICIENT
-            #        #seismic pool --num-cpus $CPUS --pooled $POOLED_SAMPLE --no-relate-pos-table $OUT_DIR/${SAMPLE_PREFIX}[ab]/relate/$REF
-            #    fi
-            #fi
-            echo #FIXME
-
+            SCATTER=$OUT_DIR/${SAMPLE_PREFIX}a_VS_${SAMPLE_PREFIX}b/graph/$REF/full/scatter_all_m-ratio-q0.csv
+            if [[ -f $SCATTER ]]; then
+                SUFFICIENT=$(python check_pearson.py $SCATTER 0.9)
+                if [[ $SUFFICIENT -eq 1 ]]; then
+                    echo $SUFFICIENT
+                    seismic pool --num-cpus $CPUS --pooled $POOLED_SAMPLE --no-relate-pos-table $OUT_DIR/${SAMPLE_PREFIX}[ab]/relate/$REF
+                fi
+            fi
         fi
     done
     if [[ -d $OUT_DIR/$POOLED_SAMPLE ]]; then
@@ -59,13 +56,13 @@ for PLATE in {1..12}; do
         # --min-mut-gap 0: To calculate the observer bias, reads must be kept regardless of the distance between mutations.
         # --min-ninfo-pos 1: Low-coverage positions are typically masked out because there is too much uncertainty in their mutation rates. Calculating distances between mutations does not require an accurate mutational profile but should include any DMS-induced mutations, including at low-coverage positions.
         # --no-mask-read-table: Calculating the table of relationships per read is not necessary for seismic graph mutdist and causes a crash from needing >32G memory.
-        #seismic -vv mask --num-cpus $CPUS -b mutdist --max-mask-iter 2 --keep-del --keep-ins --mask-polya 0 --mask-pos-file $OUT_DIR/${SAMPLE_PREFIX}ut --min-mut-gap 0 --min-ninfo-pos 1 --no-mask-read-table $OUT_DIR/$POOLED_SAMPLE
+        seismic -vv mask --num-cpus $CPUS -b mutdist --max-mask-iter 2 --keep-del --keep-ins --mask-polya 0 --mask-pos-file $OUT_DIR/${SAMPLE_PREFIX}ut --min-mut-gap 0 --min-ninfo-pos 1 --no-mask-read-table $OUT_DIR/$POOLED_SAMPLE
         # Non-default options:
         # -b profile: Indicate that these results should be used only for seismic graph profile, not for distances between mutations.
         # --keep-del: Include deletions so that the frequency of deletions can be estimated by seismic sim abstract.
         # --mask-pos-file $OUT_DIR/${PlATE_NAME}_dms-ut: Mask out these positions that were too highly mutated in the untreated control.
         # --no-mask-read-table: Calculating the table of relationships per read is not necessary for seismic graph mutdist and causes a crash from needing >32G memory.
-        #seismic -vv mask --num-cpus $CPUS -b profile --keep-del --mask-pos-file $OUT_DIR/${SAMPLE_PREFIX}ut --no-mask-read-table $OUT_DIR/$POOLED_SAMPLE
+        seismic -vv mask --num-cpus $CPUS -b profile --keep-del --mask-pos-file $OUT_DIR/${SAMPLE_PREFIX}ut --no-mask-read-table $OUT_DIR/$POOLED_SAMPLE
         if [[ $USE_RNANDRIA -eq 1 ]]; then
             # Create DB and CT files using the structure in the RNAndria database.
             FOLD_DIR=$OUT_DIR/$POOLED_SAMPLE/fold_rnandria
@@ -99,9 +96,9 @@ for PLATE in {1..12}; do
     fi
 done
 
-#seismic -v graph profile --num-cpus $CPUS --no-html $OUT_DIR/*pool/mask_profile
-#seismic -v graph mutdist --num-cpus $CPUS --no-html $OUT_DIR/*pool/mask_mutdist
-#bash run-calc-enrichment.sh
+seismic -v graph profile --num-cpus $CPUS --no-html $OUT_DIR/*pool/mask_profile
+seismic -v graph mutdist --num-cpus $CPUS --no-html $OUT_DIR/*pool/mask_mutdist
+bash run-calc-enrichment.sh
 
 # Calculate the parameters for simulation from these mutation rates and structures.
 seismic -v sim abstract --num-cpus $CPUS --struct-file $OUT_DIR $OUT_DIR/*/mask_profile/*/full

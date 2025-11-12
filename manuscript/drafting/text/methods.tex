@@ -1,0 +1,360 @@
+\documentclass[main.tex]{subfiles}
+
+
+\begin{document}
+
+
+\section{Methods}
+\label{methods}
+
+
+\subsection{SEISMIC-RNA solves RNA structure ensembles from raw mutational profiling data}
+
+SEISMIC-RNA is user-friendly software for analyzing complex mutational profiling experiments.
+It is designed for ease of use at any scale: from a single sample involving one RNA to hundreds of transcriptome-wide experiments.
+The core design principle is to process any number of input files simultaneously so that users can analyze large amounts of data quickly and with minimal effort.
+Every command of SEISMIC-RNA's main workflow thus follows several rules:
+
+\begin{description}
+	\item[Organize files automatically:] Output files go into nested directories named after the sample, step, reference, and region, respectively, so users know what data each file contains without needing to name any files manually.
+	\item[Scale easily to any amount of input data:] Any number of input files can be given to one command, as well as directories (which are searched recursively for relevant files) and glob patterns (i.e. shell wildcard characters). Due to automatic file organization, users can locate every output file generated from each input file.
+	\item[Parallelize processing to generate outputs quickly:] SEISMIC-RNA uses all CPUs to process input files in parallel, each with multiple threads.
+	\item[Write detailed reports and logs:] SEISMIC-RNA generates report files containing the parameters and key results of every step to help users automatically keep records of their analyses. It also writes log files of internal operations to assist with troubleshooting.
+	\item[Document itself:] Typing any command followed by \verb|--help| prints a summary of what the command does, how it is used, and a list of all options to customize its behavior.
+\end{description}
+
+SEISMIC-RNA implements a fully automated, end-to-end workflow that accepts raw sequencing reads as input and outputs predicted structures and 13 types of graphs, such as mutation rates, coverage, correlations between samples, and ROC curves (Figure~\ref{wf}).
+It handles any type of RNA mutational profiling data, namely from DMS-MaPseq~\cite{Zubradt2016} (the default), SHAPE-MaP~\cite{Siegfried2014}, and ETC-MaP~\cite{Douds2024} experiments.
+Additionally, SEISMIC-RNA can process data from other experiments whose readouts are point mutations, such as to quantify ADAR editing~\cite{Okada2019}, m\textsuperscript{5}C (via bisulfite sequencing)~\cite{Schaefer2008}, or single-nucleotide polymorphisms (SNPs).
+
+\subsubsection{Align reads to the reference RNA sequences}
+
+The command \verb|seismic align| aligns reads to reference RNA sequence(s).
+For convenience, it accepts input data in multiple formats.
+Raw sequencing reads (in FASTQ format, optionally compressed with gzip) can be single-end or paired-end; the latter can be supplied as two separate files (labeled ``1" and ``2") or one file of ``interleaved" reads (mates 1 and 2 alternate).
+Typically, each FASTQ file (or pair of paired-end FASTQ files) corresponds to one ``sample" from an experiment and can contain reads from any number of RNAs; alignment deduces which RNA each read came from.
+Thus, SEISMIC-RNA uses the FASTQ file name as the sample name.
+However, in some experiments, each read contains a barcode indicating which RNA it came from (barcoding is essential if the reference RNA sequences are similar enough that reads could align to multiple references).
+In that case, the command \verb|seismic demult| splits the input FASTQ file into multiple FASTQ files, one per barcode, a process called demultiplexing.
+SEISMIC-RNA can also align demultiplexed FASTQ files; in this case, it assumes each such file is named after its reference RNA sequence and located in a directory named after the sample.
+
+Before alignment, SEISMIC-RNA trims low-quality base calls and adapters from the reads and writes a read quality report using fastp~\cite{Chen2018}, one of the fastest and most accurate FASTQ preprocessors.
+SEISMIC-RNA then aligns the trimmed reads using Bowtie~2~\cite{Langmead2012}; future versions may support additional aligners such as HISAT2~\cite{Kim2019}.
+It writes a FASTQ file of every read that did not align to assist with troubleshooting.
+Among reads that aligned, SEISMIC-RNA filters out those with low mapping quality and splits the rest into one BAM file for each reference RNA sequence using SAMtools~\cite{Danecek2021}.
+Optionally, SEISMIC-RNA can further divide each BAM file into reads that came from the plus and minus strands of the RNA.
+Separating strands is essential if the experiment contained significant amount of minus-stranded RNA (e.g. from a bidirectional promoter or dsRNA virus) and requires that the library generation protocol preserves strandedness (note that RT-PCR with two gene-specific primers does not).
+To maximize speed, SEISMIC-RNA implements the alignment workflow using shell pipes, avoiding slow disk I/O operations.
+
+SEISMIC-RNA exposes most relevant options for fastp and Bowtie~2, allowing users to customize their trimming and alignment workflows.
+However, users who require tools or options that are not possible through \verb|seismic align| (e.g. splice-aware alignment is not yet available) can perform alignment outside of SEISMIC-RNA and then pass the resulting BAM (or SAM, or CRAM) files into the next step, \verb|seismic relate|.
+Note that SEISMIC-RNA requires that every BAM file contains reads from only one reference RNA sequence.
+Thus, it provides the command \verb|seismic splitbam|, which splits a BAM file containing reads from multiple references into one file per reference.
+This command can also split BAM files into plus and minus strands.
+
+\subsubsection{Calculate relationships between each read and reference}
+\label{seismic-relate}
+
+The command \verb|seismic relate| is the first committed step of SEISMIC-RNA; it performs four major functions.
+First, for each input BAM file, it generates a matrix of the relationship (match, substitution, deletion, insertion) between each read and each position in the reference RNA sequence, which makes downstream analysis more efficient compared to BAM format.
+Second, it splits the reads into small batches, for two reasons: datasets too large to fit in memory can be processed one batch at a time, without needing to load all data at once; and batches can be processed in parallel, increasing speed.
+Third, in local alignment mode (the default), Bowtie~2 removes (a.k.a. soft clips) mutations located 4 bases or less from the end of a read, causing an overall decrease in mutation rates.
+This effect is most pronounced at the ends of the reference sequence, where it causes the mutation rate to become zero.
+This step corrects that bias by trimming off the first and last 4 bases from each alignment (which are always matches).
+
+Fourth, this step marks two kinds of ambiguous relationships: low-quality base calls and ambiguous insertions/deletions.
+When a base call is low quality, it may be either a match or substitution, so SEISMIC-RNA marks it as ambiguous.
+Insertions and deletions in repetitive sequences also cause ambiguities, regardless of sequencing quality.
+For example, in Figure~\ref{wf}, read 5 contains a deletion of one C from two consecutive Cs.
+Because deleting either the first or the second C would produce the same read (TTATGGCTTCT\textbf{C}ACTGGAC), determining which C was deleted is impossible.
+Thus, the algorithm marks the positions of both consecutive Cs in read 5 as ambiguous (dark gray squares).
+SEISMIC-RNA implements a novel algorithm that detects ambiguities accurately given any combination of insertions, deletions, substitutions, and low-quality base calls.
+% Add a supplementary figure about this algorithm.
+We implemented this algorithm in the C language to maximize speed.
+
+\subsubsection{Pool together samples}
+
+At this stage, the user can optionally pool together multiple samples using the command \verb|seismic pool|.
+Pooling creates a new sample but preserves the original samples and avoids duplicating the batches of data.
+Thus, it requires very little extra space on disk compared to copying and merging FASTQ or BAM files.
+This feature is especially useful for comparing replicates: each replicate can be processed individually and the results compared to confirm reproducibility, and then the replicates can be pooled to obtain one final result.
+
+\subsubsection{Select and filter data}
+\label{seismic-mask}
+
+With the next command, \verb|seismic mask|, the user selects which data to analyze further and filters out reads and positions that cannot be used.
+Users can optionally focus on a region of the reference sequence, such as a specific RNA element or the interval between RT-PCR primers.
+SEISMIC-RNA pre-excludes positions that are not usable, such as Gs and Ts for DMS-MaPseq~\cite{Zubradt2016}, As and Cs for ETC-MaP~\cite{Douds2024}, poly(A) sequences (due to reduced mutation rates~\cite{Kladwang2020}), or custom positions.
+The last option is useful for excluding positions with high mutation rates in an untreated control sample, which users can list using the auxiliary command \verb|seismic list|.
+
+SEISMIC-RNA then determines which types of relationships count as matches and mutations.
+Base calls that count as matches or mutations are considered ``informative" and others are considered ``uninformative".
+To calculate mutation rates, the numerator is mutations and the denominator is mutations plus matches; uninformative relationships do not affect the calculation.
+By default, SEISMIC-RNA counts all substitutions as mutations but considers insertions and deletions to be uninformative (even if their locations are unambiguous) because they are rare in DMS-MaPseq data~\cite{Zubradt2016} and counting them would introduce bias against insertions and deletions in repetitive sequences.
+To process other types of datasets, users can customize which types of relationships count as mutations: for example, to measure ADAR editing, consider only A-to-G substitutions~\cite{Okada2019} to be mutations and all others to be uninformative.
+
+SEISMIC-RNA performs an iterative filtering process for reads and positions.
+First, it removes low-quality or unusable reads using a set of filters: insufficient number of base calls in the region, insufficient fraction of informative base calls, excessive fraction of mutations, two mutations too close (for an explanation, see ``\nameref{mutation-gap-section}"), or discontiguity (i.e. paired-end and there is a gap between the two mates).
+These calculations consider only the positions that have not been filtered out: for example, a position that the user had pre-excluded because it was highly mutated in an untreated control would not count towards excessive mutations in a read.
+Second, SEISMIC-RNA removes unusable positions using another set of filters: insufficient number of informative base calls or excessive fraction of mutations.
+These calculations likewise consider only the reads that have not been filtered out.
+Because the second step can filter out positions, reads that passed filters using the positions active in the first step might no longer pass using the positions active after the second step.
+To ensure all reads and positions pass all filters simultaneously, SEISMIC-RNA repeats steps 1 and 2 until the reads and positions passing the filters stop changing.
+
+\subsubsection{Resolve RNA structure ensembles by clustering reads}
+\label{seismic-cluster}
+
+The key command of SEISMIC-RNA is \verb|seismic cluster|, which determines how many structures a region of an RNA folds into, and the mutation rates of each structure, by clustering the reads.
+SEISMIC-RNA assumes that for a given RNA structure, chemical probe modifications (and hence mutations) occur independently, except that mutations closer than 4~nt occur less often than expected (for an explanation, see ``\nameref{mutation-gap-section}").
+Therefore, to calculate the probability of observing the mutations in a read, it uses a Bernoulli mixture model with a correction for mutations less than 4~nt apart, which can be clustered using the expectation-maximization (EM) algorithm~\cite{Dempster1977}.
+To determine the number of clusters (called ``K"), SEISMIC-RNA runs EM with K = 1, then K = 2, and so on, until the Bayesian information criterion~\cite{Schwarz1978} (BIC) fails to decrease or the clusters fail to pass filters.
+For details, see ``\nameref{em-clustering}" in the \nameref{supp-methods} section.
+
+This procedure resembles our earlier software DREEM~\cite{Tomezsko2020}, but with major enhancements.
+Unlike DREEM, SEISMIC-RNA can cluster reads that do not cover the entire region, such as reads 1, 2, 3, 4, 6, and 7 in Figure~\ref{wf}.
+This ability makes SEISMIC-RNA ideal for clustering long transcripts and sequencing libraries produced by random fragmentation/priming.
+It also required developing a new algorithm to correct bias caused by nearby mutations (for details, see ``\nameref{bias-correction-algorithm}" in the \nameref{supp-methods} section).
+
+SEISMIC-RNA introduces criteria to check whether clusters it detects are real and reproducible.
+It discards the result of EM if any pair of clusters is too similar (both Pearson correlation too high and arcsine distance too low), if any cluster appears spurious (both Gini index and arcsine distance from the ensemble average too high), or the reads appear jackpotted.
+Because EM is guaranteed to find a local, but not global, optimum, SEISMIC-RNA randomly initializes and runs EM multiple times for each K (except K = 1, which is run once).
+The default is 6 runs, after which SEISMIC-RNA checks whether the clustering is reproducible: at least two runs must pass filters; and the best run (i.e. with the smallest BIC) that passed filters must be sufficiently similar to at least one other run that passed filters in terms of high Pearson correlation, low arcsine distance, and low difference in log-likelihood.
+If any of these conditions are not met, then SEISMIC-RNA will run EM repeatedly until they are, or until the maximum run threshold is reached (default 30).
+If the threshold is reached, then SEISMIC-RNA will discard that K and consider the previous K to be the best number of clusters.
+For details, see ``\nameref{em-clustering}" in the \nameref{supp-methods} section.
+
+SEISMIC-RNA outputs detailed information about each clustering run to assist with interpretation and troubleshooting.
+In the \verb|parameters| directory, it writes CSV files of the mutation rates and cluster proportions for each number of clusters and EM run.
+In the \verb|statistics| directory, it writes a CSV file of 10 attributes for every EM run, including the BIC and maximum Pearson correlation between any pair of clusters, and also generates a bar graph for each attribute, which can indicate why SEISMIC-RNA chose the number of clusters it did.
+In the \verb|read-counts| directory, it writes a CSV file of the number of times each read occurred (the observed count) and the expected count for every K, as well as a scatter  plot for each K, to help visualize the level of jackpotting.
+The cluster report file also states whether each K passed filters and the best K (having the smallest BIC among those passing filters).
+
+Users can output the clusters for either just the best K (default) or all Ks.
+The latter is useful for comparing the results with different numbers of clusters.
+For further control, users can explicitly set the minimum and maximum K to test and require SEISMIC-RNA to test every K between those limits, instead of stopping when the BIC fails to decrease.
+
+\subsubsection{Join regions after masking or clustering}
+\label{seismic-join}
+
+With the command \verb|seismic join|, users can combine two or more regions after either \verb|seismic mask| or \verb|seismic cluster|.
+The former is especially useful for sequencing libraries made of multiple overlapping PCR amplicons.
+In this case, the user must mask out the primer binding sites by creating one region for each amplicon.
+If the user then wants one dataset covering all amplicons, the regions (without the primer binding sites) can be reassembled with \verb|seismic join|.
+Joining regions after \verb|seismic cluster| is useful if the user knows that two distant elements of an RNA form multiple structures in synchrony (such as via a long-range interaction).
+In this case, clustering the whole region encompassing both distant RNA elements may not work because the reads are too short to ensure that the clusters of the distant elements are synchronized.
+To solve this problem, each side can be clustered separately and the corresponding clusters joined.
+
+\subsubsection{Predict RNA structures using mutation rates}
+
+The command \verb|seismic fold| predicts RNA structures using mutation rates of each cluster or the ensemble average to improve RNA structure prediction tools.
+Currently, SEISMIC-RNA uses the Fold program from the RNAstructure suite~\cite{Reuter2010} for structure prediction.
+Future releases will be able to use additional programs, such as ShapeKnots~\cite{Hajdin2013} and ViennaRNA~\cite{Lorenz2011}.
+SEISMIC-RNA normalizes the mutation rates before structure prediction by setting a certain quantile (default 0.95) to 1, then scaling all other mutation rates linearly, capping them at 1.
+We plan to implement additional methods of normalization in future releases.
+
+SEISMIC-RNA can predict the structure of the full RNA sequence (default) or just a region.
+The region of the sequence for structure prediction can be the same as or different from the region from which the mutation rates come.
+If the RNA sequence is short enough that its structure can be predicted in a reasonable amount of time, it is generally advantageous to fold the full sequence to avoid edge effects, even if the mutation rates come from just a small region, such as a PCR amplicon.
+Conversely, it is also possible to predict the structure of a small region of a longer sequence, such as an RNA element of interest, even if the mutation rates cover the entire sequence.
+
+SEISMIC-RNA outputs predicted structures in both connectivity table (CT) and dot-bracket formats used by RNAstructure~\cite{Reuter2010}.
+Users can convert between formats using the commands \verb|seismic ct2db| and \verb|seismic db2ct|, which can handle unlimited sequence lengths, unlike the corresponding commands in RNAstructure, \verb|ct2dot| and \verb|dot2ct|.
+Using the command \verb|seismic draw|, users can draw predicted structures automatically using RNArtistCore~\cite{RNArtistCore}.
+SEISMIC-RNA also outputs a file of normalized reactivities with which other RNA graphics software such as VARNA~\cite{Darty2009} can color-code nucleotides.
+
+\subsubsection{Output processed data as graphs and tables}
+
+The command \verb|seismic graph| can generate 13 types of graphs.
+Eight types are for single samples: profile graphs (bar graphs of mutation rates or read coverage), histograms of mutations per read, histograms of mutations per position, cluster abundance, rolling Gini index, rolling signal-to-noise ratio, distances between mutations, and phi correlations between positions.
+Two types are for comparing single samples and structures: receiver operating characteristic (ROC) curves and rolling area under the ROC curve (AUC-ROC).
+And three types are for comparing two samples: scatter plots, rolling correlations, and delta profile graphs.
+
+For each type of graph, the raw data can be exported as a CSV file.
+The graph itself can be exported as an interactive HTML file (default), which is useful for data exploration; or as an SVG, PDF, or PNG file.
+
+\subsubsection{Run the entire workflow with one command}
+
+The command \verb|seismic wf| (short for ``workflow") executes all of the above commands in order, except \verb|pool| and \verb|join|.
+With this feature, users can process raw FASTQ files into finished RNA structure ensembles with a single command.
+For convenience, it can accept any number of files and directories from any points in the workflow and determine at which step to start processing each one.
+For example, if a user passes \verb|seismic wf| a FASTQ file and two report files from the \verb|relate| step on the command line, then SEISMIC-RNA will process the FASTQ file with \verb|align| to produce BAM file(s), then process every BAM file with \verb|relate| to produce relate report files, and then process each of those relate report files plus the two the user passed on the command line through the rest of the workflow (\verb|mask|, \verb|cluster|, \verb|fold|, \verb|draw|, and \verb|graph|).
+This feature makes it simple to process multiple datasets through to the end of SEISMIC-RNA's workflow with one command, even if the datasets begin at different steps in the workflow.
+
+
+\subsection{Calculating the empirical distribution of mutation gaps}
+\label{empirical-mutation-gap}
+
+We determined the empirical distribution of the smallest gap between two mutations in a read in DMS-MaPseq data.
+First, we downloaded two replicates of DMS-MaPseq on SARS-CoV-2 that were published with DRACO~\cite{Morandi2021} (NCBI accession numbers \verb|SRR12653367| and \verb|SRR12653368|).
+To determine the genome sequence, we processed the FASTQ files with SEISMIC-RNA through the \verb|align|, \verb|relate|, and \verb|pool| steps using default parameters with the SARS-CoV-2 reference sequence (NCBI accession number \verb|NC_045512.2|).
+To detect point mutations, we ran \verb|seismic graph profile -r acgt| and found six positions that mutated at least 50\% of the time.
+Four such positions mutated to the same base at least 98\% of the time: C241T, C3037T, C14408T, and A23403G; we introduced these mutations into the reference sequence.
+The other two positions, A12 and C15101, mutated to multiple bases.
+We reran \verb|align|, \verb|relate|, \verb|pool|, and \verb|mask| using the updated reference sequence and masking out heterogeneously mutated positions with \verb|--mask-pos 12| and \verb|--mask-pos 15101|.
+To measure distances between mutations, we ran \verb|seismic mask| using the additional parameters \verb|--min-ninfo-pos 1| (a position having low coverage does not make it less relevant for measuring distances between mutations), \verb|--min-mut-gap 0| (to avoid removing reads with mutations closer than 4 nt), \verb|--mask-polya 0| (masking poly(A) sequences could artificially inflate the distances between mutations), \verb|--keep-del| and \verb|--keep-ins| (to consider all mutations), \verb|--max-mask-iter 2| (masking should always finish within 2 iterations with \verb|--min-ninfo-pos 1|), and \verb|--no-mask-read-table| (we did not need the per-read table, and it would require excessive memory).
+Finally, we calculated the distribution of the minimum distance between mutations using \verb|seismic graph mutdist|.
+We omitted reads with fewer than two mutations (mutation distance of 0) and subtracted 1 from the mutation distances to obtain the mutation gaps.
+
+
+\subsection{Determining empirical mutation rates}
+\label{empirical-mutation-rates}
+
+We determined empirical mutation rates of paried and unpaired bases in DMS-MaPseq data.
+We downloaded FASTA and FASTQ files from one of our previous studies~\cite{deLajarte2024} (NCBI GEO accession number \verb|GSE262014|) and processed them with SEISMIC-RNA.
+Specifically, we kept only RNAs having two replicates with a Pearson correlation of at least 0.9, pooled the replicates, then masked positions with coverage less than 500 or a mutation rate greater than 0.01 in the untreated sample.
+Because we wanted to simulate deletions, we counted deletions as mutations using \verb|--keep-del|.
+We used the DMS mutation rates to predict the minimum free energy structure of each RNA, then calculated average mutation rates of paired and unpaired As and Cs using \verb|seismic sim abstract| based on the mutation rates and predicted structure of every RNA.
+
+
+\subsection{Simulating ground truth DMS-MaPseq for benchmarking}
+
+\subsubsection{Simulating ground truth DMS-MaPseq data to test accuracy of clustering}
+\label{sim-accuracy}
+
+We used reference lengths of 140, 280, and 420~nt.
+For 140 and 280~nt references, we simulated PCR amplicons by setting the mean read length to the reference length and the standard deviation to zero; we also set the mutation rates of the first and last 20 positions to zero to mimic primers.
+For 420~nt references, we simulated randomly fragmented reads with a mean length of 250~nt and standard deviation of 10~nt.
+For each reference length, we used an average of 2 mutations per read -- the minimum number of mutations a read must contain to be useful for clustering -- thus references with shorter reads (e.g. 140~nt) had higher average mutation rates.
+To control mutations per read, we adjusted the average mutation rates of paired and unpaired bases.
+Because the average ratio of mutation rates at unpaired to paired bases in the empirical data was relatively low -- 1.85 for As and 2.68 for Cs (for details, see ``\nameref{empirical-mutation-rates}") -- we simulated data with a more generous average ratio of 3 to account for potential inaccuracies in the predicted structures.
+By generating random RNA sequences, we found that RNAstructure Fold~\cite{Reuter2010} on average predicts that 58\% of bases are paired for these lengths of sequences.
+We calculated the expected number of mutable bases as the reference length minus primers times 0.5 (because DMS methylates only As and Cs), then multiplied by 0.58 and 0.42 to calculate the expected number of paired and unpaired bases (respectively).
+Solving the resulting system of equations gave the average mutation rate among paired bases that would yield an average of 2 mutations per read.
+We multiplied that rate by 3 to obtain the average mutation rate for unpaired bases.
+We took the other parameters for simulating mutation rates directly from the empirical data (for details, see ``\nameref{empirical-mutation-rates}"), including the fraction of low-quality positions among paired (0.00216) and unpaired (0.00354) bases and the relative variance in mutation rates among paired (0.00915) and unpaired (0.01664) bases.
+
+We simulated RNAs that folded into 1 to 4 structures.
+For each combination of reference length and number of structures (K), we randomly generated 60 RNA sequences with identical probabilities of A, C, G, and U.
+Then, for each RNA, we simulated parameters as follows:
+\begin{enumerate}
+    \item Predict the K minimum energy structures of each RNA using \verb|seismic sim fold|. If the prediction yielded fewer than K structures, then generate a new RNA sequence and start over.
+    \item Simulate mutation rates for each structure and start/end coordinates of the reads as described above using \verb|seismic sim params|. If, for any pair of structures, more than 2/3 of positions had identical mutation rates or the Pearson correlation between mutation rates was greater than the square root of 1/2, then generate a new RNA sequence and start over.
+\end{enumerate}
+We then used the parameters to simulate FASTQ files using \verb|seismic sim fastq|.
+To emulate the bias against reads with nearby mutations, we calculated the ratio of observed to expected reads for each mutation gap in empirical data (for details, see ``\nameref{empirical-mutation-gap}").
+We observed that the ratio of observed to expected reads decreased from a mutation gap of 0~nt (ratio 0.37) to 1~nt (ratio 0.20) and then increased monotonically until 8~nt (ratio 1.10).
+To calculate the proportion of each mutation gap, we normalized the ratios by dividing them by the largest ratio (1.10, at mutation gap 8~nt) and then calculating the difference between the normalized ratio of each consecutive mutation gap.
+Since the ratio was smaller for a mutation gap of 1~nt than 0~nt, the difference was negative, so we set the ratio for 0~nt equal to that for 1~nt to make the difference zero.
+We used the differences between consecutive normalized ratios as the proportion of each mutation gap: 18.2\% 0~nt, 4.8\% 2~nt, 20.5\% 3~nt, 33.0\% 4~nt, 10.1\% 5~nt, 7.4\% 6~nt, 4.7\% 7~nt, and 1.3\% 8~nt.
+For each mutation gap from 0 to 8~nt, we simulated a population of reads where no reads had two mutations closer than the gap.
+Then, we simulated each sample of size N by randomly sampling N times the above proportion of reads from each population.
+
+\subsubsection{Simulating DMS-MaPseq data with jackpotting}
+\label{sim-jackpotting}
+
+To simulate jackpotting due to PCR bias, we took each FASTQ file of a 280~nt RNA with 1 true cluster and 200,000 reads and sampled 200,000 reads randomly with replacement.
+We repeated the sampling procedure a total of 2, 4, 5, 6, 8, or 10 times to generate FASTQ files with progressively more jackpotting.
+Because each resampled FASTQ file contained duplicated reads, we reassigned every read a unique name, which SEISMIC-RNA requires.
+
+\subsubsection{Simulating ground truth DMS-MaPseq data for whole-transcript clustering}
+\label{sim-whole-transcript}
+
+For whole-transcript clustering, we simulated RNAs that were 1,200~nt long, each comprising seven independent domains:
+\begin{description}
+    \item[1 - 200:] 1 structure
+    \item[201 - 600:] 2 structures
+    \item[600 - 650:] 1 structure
+    \item[651 - 800:] 3 structures
+    \item[800 - 900:] 2 structures
+    \item[900 - 1,000:] 2 structures
+    \item[1,001 - 1,200:] 1 structure
+\end{description}
+We simulated the sequence, structure(s), and mutation rates of each domain separately, using the same method as in ``\nameref{sim-accuracy}" but with an average of 3 mutations per read.
+Then, we merged the sequences of all domains and generated all possible structures of the entire RNA and their mutation rates by taking the Cartesian product of the structures and mutation rates of all domains.
+For each RNA, we simulated one million reads with a mean length of 240~nt and standard deviation of 10~nt.
+
+
+\subsection{Benchmarking SEISMIC-RNA and other software}
+
+We performed all benchmarking on the Harvard Medical School O2 computer cluster running Red Hat Enterprise Linux v9.6.
+
+\subsubsection{Benchmarking the accuracy of SEISMIC-RNA}
+\label{benchmark-accuracy-seismic-rna}
+
+We used SEISMIC-RNA v0.24.2 to benchmark the accuracy of clustering on the FASTQ files we had simulated in ``\nameref{sim-accuracy}".
+We ran the \verb|seismic align| with \verb|--no-fastp| (to increase speed, because these simulated reads did not need adapter trimming) and \verb|--min-mapq 1| (because with the default of 25, we found that 40\% of reads were discarded for 140~nt references).
+We ran \verb|seismic relate| also with \verb|--min-mapq 1|, \verb|--brotli-level 1| (to speed up file compression), and \verb|--no-relate-pos-table| (unnecessary for analysis).
+We then ran \verb|seismic mask| with a \verb|--mask-regions-file| to mask out primers for the 140 and 280~nt references, \verb|--keep-del| (to measure accuracy of finding deletions), \verb|--brotli-level 1|, and \verb|--no-mask-pos-table|.
+In a separate branch (\verb|-b gap-0|), we ran \verb|seismic mask| with the same parameters plus \verb|--min-mut-gap 0| to determine accuracy without bias correction.
+We used \verb|seismic table| to generate relate and mask position tables for only the samples with 200,000 reads.
+We clustered the data we had simulated without jackpotting using \verb|seismic cluster| with \verb|--no-jackpot| (to increase speed by disabling jackpotting analysis) and \verb|--brotli-level 1|.
+We also clustered the data we had simulated with jackpotting (for details, see ``\nameref{sim-jackpotting}") using \verb|seismic cluster| with \verb|--jackpot|, \verb|--max-jackpot-quotient 1000000| (to allow practically unlimited jackpotting), \verb|--brotli-level 1|, and \verb|--no-cluster-pos-table| and \verb|--no-cluster-abundance-table| (since we examined only the number of clusters, not their mutation rates or proportions).
+Finally, we output the results as CSV files using the \verb|seismic graph| subcommands \verb|histread| (number of mutations per read), \verb|abundance| (proportion of each cluster), \verb|profile| (mutation rate of the mask and cluster results and coverage of the relate results), and \verb|mutdist| (distribution of mutation distances from \verb|seismic mask| with \verb|--min-mut-gap 0|).
+
+To determine if SEISMIC-RNA had found the correct number of clusters, we compared the best number of clusters (from the cluster report file) with the ground truth number of clusters.
+Because the number assigned to each cluster is arbitrary, we needed to match up corresponding clusters before calculating the accuracy of mutation rates and proportions.
+To do so, we calculated the ``cost" of matching each cluster that SEISMIC-RNA detected with each true cluster as one minus the Pearson correlation of the mutation rates.
+This calculation yielded a cost matrix (not necessarily square) of detected clusters (rows) by true clusters (columns).
+We then found the optimal assignment of detected clusters to true clusters using a modified Jonker-Volgenant algorithm~\cite{Crouse2016} as implemented in the \verb|linear_sum_assignment| function of SciPy~\cite{Virtanen2020}.
+To determine the accuracy of the mutation rates, we concatenated those of the detected clusters and corresponding true clusters and calculated the Pearson correlation.
+To determine the accuracy of the cluster proportions, we calculated the root mean square error (RMSE) between the detected proportions and corresponding true proportions.
+
+\subsubsection{Benchmarking the accuracy of DanceMapper}
+
+We ran ShapeMapper v2.3.0~\cite{Busan2018} on each pair of FASTQ files with \verb|--min-depth 1000| (to match SEISMIC-RNA's default minimum read depth), \verb|--min-mapq 1| (as with SEISMIC-RNA), \verb|--min-mutation-separation 4| (to collapse mutations less than 4~nt apart into one mutation -- the closest analog to SEISMIC-RNA's bias correction but not identical), and \verb|--output-parsed-mutations| (required for DanceMapper).
+We did not use the \verb|--dms| flag because this option causes As and Cs to be normalized separately; since we calculated the correlation between all mutation rates, we needed to normalize all bases together.
+We ran DanceMapper v1.1~\cite{Olson2022} on each output from ShapeMapper 2 with \verb|--fit| (to enable clustering), \verb|--maxcomponents 5| (up to 5 clusters), \verb|--maskG| and \verb|--maskU| (for DMS-MaPseq), and \verb|--mincoverage 1| (to allow all reads).
+
+We parsed the reactivities file from DanceMapper to determine the number of clusters it had found and the mutation rates and proportions of each cluster.
+To match the detected clusters from DanceMapper to the true clusters and calculate the accuracy of mutation rates and proportions, we used the same method as in ``\nameref{benchmark-accuracy-seismic-rna}".
+
+\subsubsection{Benchmarking the accuracy of DRACO}
+\label{benchmark-accuracy-draco}
+
+We used RNA Framework v2.9.2~\cite{Incarnato2018} and DRACO v1.2~\cite{Morandi2021} to benchmark the accuracy of clustering.
+First, we merged the FASTQ files of mates 1 and 2 using PEAR v0.9.11~\cite{Zhang2013} because DRACO cannot handle reads with multiple mates.
+We indexed the reference sequence for Bowtie~2~\cite{Langmead2012} using \verb|bowtie2-build| and then ran \verb|rf-map| on the index and merged FASTQ file with \verb|--bowtie2| and \verb|--bowtie-softclip| (to match SEISMIC-RNA's default).
+We then ran \verb|rf-count| with \verb|--fast| (to increase speed), \verb|-m| (mutational profiling mode), \verb|--mutation-map| (required for DRACO), and \verb|--mask-file| specifying the primer positions to mask (only for the 140 and 280~nt RNAs).
+We ran \verb|draco| on the mutation map file with \verb|--allNonInformativeToOne| to default to one cluster if all windows in the transcript are non-informative (to match the behavior of the other software).
+We converted the JSON file from DRACO to an RC file using \verb|rf-json2rc| with \verb|--median-pre-cov 1|, \verb|--median-cov 1|, and \verb|--min-confs 1| (to output clusters for as many windows as possible, even those forming one cluster).
+We output the mutation rates using \verb|rf-norm| with \verb|--scoring-method 4| (mutations divided by coverage, the same as in SEISMIC-RNA), \verb|--raw| (raw mutation rates without normalization), \verb|--reactive-bases AC| (for DMS-MaPseq), and \verb|-D 6| (round to 6 decimal places).
+
+Determining the accuracy of DRACO was more complicated than for the other software because it produces clusters in overlapping windows.
+For the number of clusters detected, we used the maximum number of clusters among all windows.
+Then, for each window that formed the maximum number of clusters, we determined the true cluster that corresponded to each detected cluster in the window.
+For each true cluster, we averaged the mutation rates and proportions of the corresponding detected clusters across all windows that formed the maximum number of clusters, ignoring missing mutation rates.
+This method produced a single mutation rate per position per cluster, and a single proportion for each cluster.
+We then compared these mutation rates and proportions to the ground truth in the same manner as in ``\nameref{benchmark-accuracy-seismic-rna}".
+
+\subsubsection{Benchmarking the accuracy of DREEM}
+
+We edited the source code of DREEM v1.0~\cite{Tomezsko2020} to allow up to 6 clusters (the default is up to 3).
+We indexed each reference sequence using Bowtie~2~\cite{Langmead2012} and ran DREEM with the \verb|--fastq| option on each pair of FASTQ files for the 140 and 280~nt RNAs.
+DREEM cannot cluster regions that are longer than the reads, so we did not analyze the 420~nt RNAs with DREEM.
+
+We used the \verb|log.txt| file from DREEM to determine the number of clusters it detected and the \verb|Clusters_Mu.txt| and \verb|Proportions.txt| files from the best EM run to determine the mutation rates and proportions, respectively.
+We then calculated the accuracy in the same way as in ``\nameref{benchmark-accuracy-seismic-rna}".
+
+\subsubsection{Benchmarking the accuracy of whole-transcript clustering with SEISMIC-RNA}
+\label{benchmark-whole-seismic-rna}
+
+We used SEISMIC-RNA v0.24.3 to benchmark whole-transcript clustering using the FASTQ files we had simulated in ``\nameref{sim-whole-transcript}".
+We ran \verb|seismic align| with \verb|--no-fastp-detect-adapter-for-pe| (no automatic adapter detection), \verb|--fastp-adapter-1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCA| and \verb|--fastp-adapter-2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT| (the adapter sequences), and \verb|--min-mapq 1|.
+We also ran \verb|seismic relate| with \verb|--min-mapq 1|.
+We then ran \verb|seismic ensembles| with \verb|--gap-mode insert| so that both domains and gaps between them would be clustered.
+
+To calculate the accuracy of the mutation rates, we compared the clusters of each detected domain to the ground truth clusters.
+Because the 1,200~nt RNAs comprised seven independent ground truth domains, each formed a total of 24 true clusters (the product over all domains).
+Since each detected domain was a fraction of the full RNA, within the region it spanned multiple true clusters would have identical mutation rates.
+Thus, we collapsed true clusters with identical mutation rates within the region spanned by the detected domain.
+Then, we matched the detected clusters to the true clusters using the same method as in ``\nameref{benchmark-accuracy-seismic-rna}".
+We calculated the rolling Pearson correlation using a window of 45~nt between the corresponding detected and true clusters.
+
+\subsubsection{Benchmarking the accuracy of whole-transcript clustering with DRACO}
+\label{benchmark-whole-draco}
+
+We ran RNA Framework v2.9.2~\cite{Incarnato2018} and DRACO v1.2~\cite{Morandi2021} in the same manner as with ``\nameref{benchmark-accuracy-draco}", except that for \verb|draco| we added the options \verb|--absWinLen 100| (to make the window length match that of the smallest ground truth domain with at least 2 clusters) and \verb|--reportNonInformative| (so that one-cluster domains would not cause gaps in the rolling correlation).
+For each cluster-forming region detected by DRACO, we assigned each cluster in the region to one of the true clusters and calculated, for each position in the region, the rolling correlation between detected and true mutation rates using the same method as in ``\nameref{benchmark-whole-seismic-rna}".
+Because regions from DRACO could overlap, each position could be covered by multiple regions.
+We reasoned that mutation rates would tend to be more accurate near the center of the region than near their ends.
+Thus, for each position, we used the rolling correlation from the region whose center was closest to the position.
+
+\subsubsection{Benchmarking the speed of each piece of software}
+
+To benchmark the speed, we processed the FASTQ files we had simulated for every 280~nt RNA with 2 or 4 clusters with each piece of software.
+We ran ShapeMapper v2.3.0~\cite{Busan2018} and DanceMapper v1.1~\cite{Olson2022}, RNA Framework v2.9.2~\cite{Incarnato2018} and DRACO v1.2~\cite{Morandi2021}, and DREEM v1.0~\cite{Tomezsko2020} in exactly the same way as with determining the accuracy of clustering.
+For SEISMIC-RNA, we had disabled fastp~\cite{Chen2018} and the jackpotting calculation when benchmarking the accuracy, so we re-enabled them to ensure the speed comparison was fair.
+Specifically, we ran \verb|seismic align| with \verb|--no-fastp-detect-adapter-for-pe| (no automatic adapter detection), \verb|--fastp-adapter-1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCA| and \verb|--fastp-adapter-2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT| (the adapter sequences), and \verb|--min-mapq 1|; \verb|seismic relate| with \verb|--min-mapq 1|; \verb|seismic mask| with \verb|--mask-regions-file| (to mask the primers) and \verb|--keep-del| (to count deletions); and \verb|seismic cluster| with all the default parameters.
+For each piece of software, we separately measured the time for each step using the command-line program \verb|/usr/bin/time|, then summed them to calculate the total time.
+
+\end{document}

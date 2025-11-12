@@ -1,0 +1,19 @@
+\documentclass[main.tex]{subfiles}
+
+
+\begin{document}
+
+
+\section{Abstract}
+
+RNA structures perform myriad functions, but analyzing structure ensembles remains challenging due to systematic biases in mutational profiling data.
+Mutations less than four nucleotides apart are underrepresented, undermining the assumption of independent mutations and making single RNA structures appear as multiple clusters.
+Here, we present SEISMIC-RNA, software that resolves RNA structure ensembles directly from raw sequencing reads while explicitly correcting for this bias and additional artifacts.
+The fully automated workflow scales easily from single RNAs to whole transcriptomes; supports DMS-MaPseq, SHAPE-MaP, ETC-MaP, and other mutation-based assays; and outputs predicted structures plus 13 types of graphs for detailed analyses.
+We benchmarked SEISMIC-RNA against existing software (DREEM, DRACO, and DanceMapper) using 4,320 simulated datasets spanning three RNA lengths and one to four true structures.
+At 200,000 reads, SEISMIC-RNA correctly identified the number of clusters in 88\% of datasets, compared to 56–82\% for competing software, and ran 5–39 times faster.
+It also pinpointed domains that form multiple structures in long transcripts using a new window-free algorithm that outperformed window-based approaches in our benchmarks.
+Freely available and installable with a single Conda command, SEISMIC-RNA easily and accurately resolves RNA structure ensembles from complex mutational-profiling experiments.
+
+
+\end{document}

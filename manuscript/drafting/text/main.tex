@@ -1,0 +1,115 @@
+\documentclass[11pt,a4paper]{article}
+
+% distribute document among multiple source files
+\usepackage{subfiles}
+
+% space between list items
+\usepackage{enumitem}
+\setlist{nosep}
+\setlist[description]{leftmargin=1em, labelindent=0pt, labelsep=0.5em}
+
+% margins
+\usepackage[a4paper,left=3cm,right=3cm,top=2cm,bottom=2cm]{geometry}
+
+% Discourage text from running into the margins.
+\emergencystretch \textwidth
+
+% prevent widow/orphan lines over the entire document
+\usepackage[defaultlines=2,all]{nowidow}
+
+% URL formatting
+\usepackage{url}
+
+% automatic intradocument links
+\usepackage[colorlinks=false]{hyperref}
+
+% graphics
+\usepackage{graphicx}
+\graphicspath{{../figures}}
+
+% float positioning
+\usepackage{float}
+
+% wrapped figures
+\usepackage{wrapfig}
+
+% wrapped tables
+\usepackage{tabularray}
+
+% more math commands, like \binom
+\usepackage{amsmath}
+
+% supplementary items
+\usepackage{newfloat}
+\DeclareFloatingEnvironment[name={Supplementary Figure}]{sifigure}
+\DeclareFloatingEnvironment[name={Supplementary Table}]{sitable}
+
+% bibliography
+\usepackage{natbib}
+
+% Greek letters in text mode
+\usepackage{textgreek}
+
+% main typeface
+\usepackage{fontspec}
+%\setmainfont{Helvetica}
+%\setmonofont{Courier}
+
+% 2.0-line spacing
+\usepackage{setspace}
+\doublespacing
+
+% title and heading typefaces
+\usepackage{titlesec}
+\titleformat{\section}{\singlespacing\LARGE\raggedright\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\singlespacing\Large\raggedright\bfseries}{}{0pt}{}
+\titleformat{\subsubsection}{\singlespacing\large\raggedright\bfseries}{}{0pt}{}
+
+% line numbers
+\usepackage{lineno}
+%\linenumbers
+
+% title
+\title{SEISMIC-RNA Resolves RNA Structure Ensembles with Bias Correction}
+\author{Matthew F. Allan\textsuperscript{1}, Justin Aruda\textsuperscript{1,2}, and Silvi Rouskin\textsuperscript{1\textdagger}}
+\date{
+	\textsuperscript{1} Department of Microbiology, Harvard Medical School, Boston, Massachusetts, USA 02115 \\
+	\textsuperscript{2} Harvard Program in Biological and Biomedical Sciences, Division of Medical Sciences, Harvard Medical School, Boston, MA, USA 02115 \\
+	\textsuperscript{\textdagger} To whom correspondence should be addressed: silvi@hms.harvard.edu \\
+}
+
+
+\begin{document}
+
+% Include the sections of the paper.
+\begin{singlespace}
+\maketitle
+\end{singlespace}
+\newpage
+\subfile{abstract}
+\newpage
+\subfile{intro}
+\newpage
+\subfile{methods}
+\newpage
+\subfile{results}
+\newpage
+\subfile{figures/figures}
+\newpage
+\subfile{extras}
+
+% Create the references section.
+\newpage
+\begin{singlespace}
+	\bibliographystyle{unsrt}
+	\bibliography{refs}
+\end{singlespace}
+
+% Include supplementary information.
+\newpage
+\subfile{supp-figures/supp-figures}
+\newpage
+\subfile{supp-methods}
+
+
+\end{document}

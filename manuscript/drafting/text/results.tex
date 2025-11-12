@@ -1,0 +1,194 @@
+\documentclass[main.tex]{subfiles}
+
+
+\begin{document}
+
+
+\section{Results and Discussion}
+\label{results-section}
+
+\subsection{Accurate EM clustering must account for underrepresentation of reads with nearby mutations}
+\label{mutation-gap-section}
+
+We had previously shown that mutations less than 4~nt apart are underrepresented in DMS-MaPseq data~\cite{Tomezsko2020}.
+Here, we confirmed that this bias is intrinsic to the method, as it also occurred in DMS-MaPseq data from another lab~\cite{Morandi2021}.
+In this dataset, the number of reads with two mutations separated by 0 to 3~nt was less than half of what would be expected if all positions mutated independently (Figure~\ref{mutation-gap}A).
+Consequently, positions less than 4~nt apart do not mutate independently: they are anti-correlated.
+
+We hypothesized that clustering algorithms that assume positions within one structure mutate independently (e.g. EM clustering using a Bernoulli mixture model in DanceMapper~\cite{Olson2022}) would detect too many clusters.
+Suppose an RNA adopted a single structure with two DMS-reactive positions less than 4~nt apart (Figure~\ref{mutation-gap}B).
+Reads in which both positions mutated would be underrepresented, causing mutations at these positions to appear almost mutually exclusive.
+Consequently, a naive clustering algorithm would put reads with a mutation at each position into a distinct cluster -- falsely detecting multiple clusters for one structure.
+
+To test our hypothesis, we used SEISMIC-RNA's simulation tool to generate 60 random RNA sequences -- each with one structure -- and simulate DMS-MaPseq data that mimicked the bias against nearby mutations (for details, see ``\nameref{sim-accuracy}").
+We confirmed that the distances between mutations in the simulated data were similar to those in empirical data (Figure~\ref{mutation-gap}C).
+Naive EM clustering (no bias correction) falsely detected more than one cluster in 95\% of the simulated RNAs (Figure~\ref{mutation-gap}D).
+To determine why, we found that in one sequence that had yielded two clusters, position 83 had the second-highest true mutation rate (10.5\%) and was surrounded by six positions with mutation rates of at least 2\% (Figure~\ref{mutation-gap}E).
+In cluster 2, the mutation rate of position 83 was 92.5\% -- over 9 times the true value -- while all surrounding positions (<~4~nt away) had mutation rates of 0.6\% or less -- below their true values.
+All other positions had similar mutation rates in cluster 1 vs. cluster 2.
+Therefore, the EM algorithm without bias correction does indeed partition mutations at nearby positions into different clusters, as we had hypothesized.
+
+We developed an algorithm that corrects for the bias against nearby mutations.
+The main mechanism for the bias is not likely that methylating a base makes DMS less likely to methylate nearby bases.
+Instead, the most plausible explanation is that when the reverse transcriptase encounters multiple nearby DMS methylations, it terminates or dissociates, producing a truncated cDNA~\cite{Sexton2017}.
+Truncated cDNAs would disappear from libraries prepared by gene-specific PCR (since they would lack the 5' primer binding site).
+Although they could still appear in libraries prepared by random fragmentation, the last mutation made by the RT would be less than 4~nt from the 5' end and thus be soft-clipped during local alignment, so the read would not cover either mutated position.
+Assuming that reads with mutations closer than 4~nt drop out, we devised a formula that calculates what mutation rates would be observed (after drop-out) given the true, underlying mutation rates.
+To correct the bias, the formula is reversed, solving for the true mutation rates given the observed mutation rates.
+The correction works as long as no mutation rate is close to 100\% (such as an endogenous mutation or modification, which should be masked).
+For the full formulation, see ``\nameref{bias-correction-algorithm}" in the \nameref{supp-methods} section.
+
+SEISMIC-RNA generalizes the bias correction we had introduced in DREEM~\cite{Tomezsko2020}, which worked only if all reads covered the full region being clustered (e.g. PCR amplicons). SEISMIC-RNA can also handle reads with arbitrary start/end coordinates, ideal for sequencing libraries prepared by random fragmentation/priming. With bias correction enabled, SEISMIC-RNA correctly detected one cluster in 100\% of the datasets with simulated bias (compared to 5\% with the correction disabled), showing that bias correction is critical for accurate clustering (Figure~\ref{mutation-gap}D).
+
+\subsection{Overrepresented reads can produce false clusters}
+\label{jackpotting-section}
+
+We hypothesized that overrepresentation of certain reads would also produce false clusters.
+Reads can become overrepresented due to bottlenecks (e.g. a low quantity or quality of input RNA) or to biases during fragmentation, adapter ligation, RT, or PCR~\cite{Shi2021}.
+In particular, PCR can over-amplify specific reads or mutations stochastically, which is known as ``jackpotting"~\cite{Marotz2019}.
+Thus, we tested whether simulated PCR jackpotting can cause SEISMIC-RNA to detect too many clusters.
+We simulated FASTQ files with increasing amounts of jackpotting by resampling reads repeatedly (for details, see ``\nameref{sim-jackpotting}") and processed them with SEISMIC-RNA.
+As expected, SEISMIC-RNA became increasingly likely to detect too many clusters as the number of rounds of resampling increased (Supplementary Figure~\ref{jackpotting}A).
+
+To detect jackpotting before it causes false clusters, we developed a metric we call the ``jackpotting quotient" that measures how jackpotted the reads are compared to expectations (for details, see ``\nameref{calc-jackpotting-quotient}" in the \nameref{supp-methods}).
+The jackpotting quotient is 1.0 if there is no jackpotting and increases as jackpotting becomes more severe.
+We calculated the jackpotting quotients of the jackpotted FASTQ files we had simulated (Supplementary Figure~\ref{jackpotting}B).
+As expected, they were all approximately 1.0 without resampling, while the mean and standard deviation both increased with more rounds of resampling.
+Using this method of simulating jackpotting, there was no clear threshold of jackpotting quotient that separated datasets that correctly produced one cluster from those that falsely produced more.
+Instead, we found that the difference in BIC between 2 clusters and 1 cluster determined how many clusters SEISMIC-RNA detected (Supplementary Figure~\ref{jackpotting}C).
+The smallest jackpotting quotient for which two clusters were detected was 1.40.
+To be conservative, we set SEISMIC-RNA's default threshold for ``too jackpotted" to 1.1.
+Samples with higher jackpotting quotients may still cause no issues during clustering, so users may raise the threshold if needed.
+
+During EM clustering, the jackpotting quotient tends to improve (decrease) as the number of clusters (K) increases.
+Thus, unlike with the other filters (which tend to worsen), SEISMIC-RNA will not stop at the current K if all EM runs fail the jackpotting filter.
+However, it will still exclude EM runs that fail the jackpotting filter from the final results.
+Calculating the jackpotting quotient is computationally expensive (sometimes more so than clustering itself), so users may optionally disable it, at the risk of detecting false clusters if the reads are substantially jackpotted.
+
+
+\subsection{SEISMIC-RNA detects clusters more accurately than other software}
+
+We compared SEISMIC-RNA to the three other pieces of software that solve RNA structure ensembles: DREEM~\cite{Tomezsko2020}, DRACO~\cite{Morandi2021}, and DanceMapper~\cite{Olson2022}.
+To evaluate the accuracy, we used simulated datasets so that we could control the true number of clusters and mutation rates (for details, see ``\nameref{sim-accuracy}").
+The mutation rates (Supplementary Figure~\ref{mus-hist-200000}) were adjusted so the average read would have 2 mutations  (Supplementary Figure~\ref{nmut-hist-200000}).
+We simulated RNA lengths of 140, 280, and 420~nt; 1 to 4 structures per RNA; 60 RNAs for each combination of length and number of structures; and six sample sizes from 5 to 200 thousand paired-end reads (4,320 pairs of FASTQ files in total).
+All reads were 150x150~nt, so the 140 and 280~nt RNAs were simulated as PCR amplicons and the 420~nt RNAs as randomly fragmented reads (Supplementary Figure~\ref{ncov-200000}).
+
+We processed every pair of FASTQ files with each piece of software, except for the 420~nt RNAs with DREEM, which cannot cluster regions longer than reads.
+First, we determined for each piece of software the fraction of simulations for which it detected the correct number of clusters (Figure~\ref{accuracy}A) and the average Pearson correlation between true and detected mutation rates (Figure~\ref{accuracy}B) at the maximum number of reads (200,000).
+At determining the number of clusters, SEISMIC-RNA was the most accurate software on the 140 and 280~nt amplicons -- the only software that reached 100\% accuracy with up to 2 and 3 clusters, respectively; and on the 420~nt reference with fragmented reads performed similarly to DanceMapper and better than DRACO for 1 and 2 true clusters.
+SEISMIC-RNA also achieved the highest average correlation between true and detected mutation rates for every reference and true number of clusters.
+However, no software consistently performed the best at determining the proportions of the clusters; SEISMIC-RNA achieved the lowest root-mean-square error (RMSE) for 140 and 280~nt RNAs with 1 and 4 clusters but performed slightly worse than DanceMapper for 280 and 420~nt RNAs with 2 and 3 clusters (Supplementary Figure~\ref{average-pis-rmse_main-200000}).
+Overall, SEISMIC-RNA was more accurate than the other software at determining the number of clusters and their mutation rates, but not always their proportions, at high coverage (200,000 reads).
+
+We then investigated how many reads each piece of software needed to detect the correct number of clusters (Supplementary Figure~\ref{vs-reads-correct-k-main}).
+For 1 true cluster, SEISMIC-RNA correctly detected 1 cluster in 100\% of simulations for every depth from 5 to 200 thousand reads; the other software tended to find too many clusters when given more reads on the 140 nt and 280~nt amplicons.
+As the number of clusters increased, SEISMIC-RNA required more reads to achieve a given accuracy, which increased monotonically with read depth.
+Detecting 2 true clusters with 90\% accuracy required at least 50,000, 50,000, and 100,000 reads for the 140, 280, and 420~nt RNAs, respectively.
+Detecting 3 with 90\% accuracy required at least 200,000 reads for the 140 and 280~nt RNAs, and more than that for the 420~nt RNAs.
+DREEM also became more accurate with read depth but required roughly twice as many reads as SEISMIC-RNA for the same accuracy.
+DanceMapper achieved the same accuracy as SEISMIC-RNA for the 280 and 420~nt references with 2 or 3 true clusters, but generally lower accuracies at read depths of 50,000 or more for 1 or 4 true clusters and for the 140~nt amplicon.
+The accuracy of DanceMapper closely resembled SEISMIC-RNA run with bias correction disabled (Supplementary Figure~\ref{vs-reads-correct-k-seismic}), suggesting that the main reason for DanceMapper's lower accuracy is its lack of observer bias correction.
+
+DRACO tended to require fewer reads than the other pieces of software to detect multiple clusters (Supplementary Figure~\ref{vs-reads-correct-k-main}).
+For instance, it correctly detected 2 clusters in 25 - 50\% of the simulations of 2 true clusters with only 5,000 reads -- the minimum its authors recommend for clustering~\cite{Morandi2021}.
+To investigate whether, at low read depths, the clusters DRACO detected were also more accurate, we calculated the Pearson correlation of the mutation rates (Supplementary Figure~\ref{vs-reads-mus-pcc-main}) and the root-mean-square error (RMSE) of the proportions (Supplementary Figure~\ref{vs-reads-pis-rmse-main}) at every read depth between the ground truth clusters and the clusters detected by each piece of software.
+DRACO achieved the lowest (best) RMSE of cluster proportions out of all software for 420~nt RNAs with 2 or more clusters at read depths up to 50,000; and for the 280~nt RNAs with 2 or more clusters at read depths up to 20,000.
+DRACO also achieved the highest (best) correlation among all software for the 140 and 280~nt RNAs with 2 clusters at 5,000 reads, although at or above 20,000 reads the other software had higher correlations than DRACO.
+For 420~nt RNAs, DRACO suffered from the lowest correlation of mutation rates among all software for every read depth despite detecting the correct number of clusters more often than all other software when the true number of clusters was 3 or more.
+Thus, DRACO produced the most accurate mutation rates of amplicons that formed 2 clusters with 5,000 reads, but with more reads and with fragmented reads it was less accurate than the other software.
+
+Because DRACO typically identified more clusters than did the other pieces of software, it was the only program for which the relationship between read depth and accuracy at detecting 2 or more clusters was not generally monotonic (Supplementary Figure~\ref{vs-reads-correct-k-main}).
+With fewer reads, DRACO often detected the correct number of clusters (even if the proportions and mutation rates weren’t always accurate); while with more reads, DRACO sometimes detected too many clusters (Supplementary Figure~\ref{proportion-each-k-main-200000}).
+The distinct behavior of DRACO likely stems from its use of spectral clustering, a fundamentally different algorithm from EM (used by DREEM, DanceMapper, and SEISMIC-RNA).
+DRACO therefore offers a complementary approach that can provide additional support for identifying biologically significant clusters.
+
+
+\subsection{In long transcripts, regions that form clusters feature densely correlated mutations}
+
+Long RNA molecules -- such as mRNAs, long non-coding RNAs (lncRNAs), and viral RNAs -- often contain multiple separate domains that can fold independently.
+Therefore, clustering the entire RNA as one unit can be impractical.
+For example, if an RNA had two independent domains, and each domain folded into two different structures, the RNA as a whole could adopt four possible combined structures.
+Detecting all four clusters might be possible if the domains were close enough that some reads covered both domains and the read depth were sufficient.
+However, as the number of clusters increases, the number of reads required increases and the accuracy of all software drops (Supplementary Figure~\ref{vs-reads-correct-k-main}).
+Since the total number of clusters increases exponentially with the number of domains, detecting all possible clusters in long transcripts would require an impractically large number of reads.
+
+To solve this problem, we developed a new method that discovers cluster-forming domains in long transcripts without needing to run clustering first (Figure~\ref{ensembles}A).
+For details, see ``\nameref{long-transcript-clustering}" in the \nameref{supp-methods}.
+Essentially, it works by discovering pairs of positions with correlated mutations -- that do not mutate independently.
+Since we define a cluster to be a set of reads in which all pairs of positions (at least 4~nt apart) mutate independently, correlations between positions indicate clusters.
+Calculating pairwise correlations requires $O(n^2)$ time and memory with respect to the sequence length $n$, which could become prohibitive for long RNAs.
+To solve this problem, SEISMIC-RNA calculates pairwise correlations within shorter tiles, each twice the median read length and overlapping half of each adjacent tile.
+This tiled approach allows the algorithm to scale roughly as $O(n)$ with sequence length (and $O(n^2)$ with read length) while still ensuring that every possible pair of positions is covered by at least one tile.
+Then, it merges the correlated positions from all tiles and identifies domains where correlated positions are most dense.
+This step protects against false positive correlated pairs by acting as a denoising filter that ignores isolated pairs.
+SEISMIC-RNA then clusters each domain (which presumably forms at least two clusters) and each gap between domains (which presumably forms one cluster).
+This workflow can be run with the command \verb|seismic ensembles|.
+
+While this approach has the same goal as DRACO, it has several advantages.
+DRACO clusters the whole transcript using a sliding window of fixed size.
+If the window is too short, then DRACO may lack statistical power to detect multiple clusters; and if too long, then small regions that form multiple structures may go undetected and the precision of the start and end coordinates of each domain will decrease.
+A transcript can contain cluster-forming domains of various sizes, so a single window size may not work for all domains.
+SEISMIC-RNA determines the location and size of each domain before clustering, so clustering is not sensitive to a window size and can handle domains of variable sizes.
+DRACO's algorithm clusters overlapping windows, increasing computational expense and creating ambiguity in the regions where windows overlap.
+SEISMIC-RNA generates a set of non-overlapping domains before clustering, minimizing computational cost and returning at most one set of clusters for any region of the sequence.
+
+To compare the approaches, we randomly generated 60 RNA sequences (1,200~nt in length), with four domains, each 100-400~nt and forming 2 or 3 clusters (Supplementary Figure~\ref{long-transcript-ks}A), as described in ``\nameref{sim-whole-transcript}".
+For each RNA, we simulated FASTQ files containing 1 million reads and processed the data with SEISMIC-RNA and DRACO (for details, see ``\nameref{benchmark-whole-seismic-rna}" and ``\nameref{benchmark-whole-draco}").
+We calculated the rolling Pearson correlation between the true and detected clusters for each RNA and for the average across all 60 RNAs (Figure~\ref{ensembles}B).
+SEISMIC-RNA achieved an average rolling Pearson correlation greater than 0.99 for every position, while DRACO averaged 0.92.
+SEISMIC-RNA also detected the number of clusters at each position more accurately and with sharper boundaries between domains than did DRACO (Supplementary Figure~\ref{long-transcript-ks}B).
+As SEISMIC-RNA and DRACO can automatically cluster long transcripts, both are better suited than DREEM and DanceMapper for analyzing complex RNAs with multiple domains or long-range structural features.
+
+
+\subsection{SEISMIC-RNA accelerates resolution of alternative RNA structures}
+
+We measured the speed of processing the datasets of 280~nt RNA sequences with 200,000 reads and either 2 or 4 true clusters.
+To control for the number of CPUs available, we ran each program in single-threaded mode even though SEISMIC-RNA, ShapeMapper~2, RNA Framework, and DRACO support multiple CPUs.
+We also considered only instances in which the program detected the true number of clusters, to avoid rewarding a program for running quickly but inaccurately.
+SEISMIC-RNA consistently ran faster than the other programs, taking an average of 12 minutes to resolve 2 clusters, compared to 32 minutes for DRACO, 72 minutes for DanceMapper, and 335 minutes for DREEM (Figure~\ref{speed}A).
+SEISMIC-RNA also scaled well to 4 clusters, taking just 19 minutes on average, compared to 99 minutes for DanceMapper, 316 minutes for DRACO, and 1,291 minutes for DREEM.
+
+We also compared the speed of SEISMIC-RNA and DRACO while doing whole-transcript clustering on 1,200~nt RNAs and found that SEISMIC-RNA was 84\% faster than DRACO on average (127 vs. 234 minutes, respectively).
+Interestingly, DRACO performed faster on 1,200~nt RNAs with 1 million reads than on 280~nt RNAs with 200,000 reads
+This result indicates that the time required by DRACO scales more strongly with the number of clusters than with the number of reads or length of transcript, and vice versa for SEISMIC-RNA.
+Therefore, in a speed contest, DRACO would likely win at very long RNAs (>10,000~nt) with hundreds of millions of reads, while SEISMIC-RNA would perform better on shorter RNAs that fold into a large number of complex structures.
+
+
+\subsection{SEISMIC-RNA offers unique features among RNA structure analysis software}
+
+We compared features of SEISMIC-RNA v0.24.3 to those of ShapeMapper v2.3.0~\cite{Busan2018} and DanceMapper v1.1~\cite{Olson2022}, RNA Framework v2.9.2~\cite{Incarnato2018} and DRACO v1.2~\cite{Morandi2021}, and DREEM v1.0~\cite{Tomezsko2020} (Supplementary Figure~\ref{features}).
+SEISMIC-RNA is more portable, since it runs on both \mbox{macOS} and Linux, while ShapeMapper~2 and DRACO run only on Linux. Additionally, SEISMIC-RNA and its dependencies can be installed with a single command, \verb|conda install -c bioconda -c conda-forge seismic-rna|, making it simpler to install than the other software.
+It also accepts the greatest variety of input data formats -- both (gzipped) FASTQ and SAM/BAM/CRAM files -- and handles both single- and paired-end reads natively; DRACO users must merge paired-end FASTQ files manually with software such as PEAR~\cite{Zhang2013} before preprocessing with RNA Framework.
+SEISMIC-RNA can handle splicing (or other large gaps that produce \verb|N| operations in CIGAR strings) but as of now supports only Bowtie~2 (which is not splice aware) using the \verb|align| command, so users who need that functionality may run alignment outside of SEISMIC-RNA (e.g. with HISAT2~\cite{Kim2019}) and pass the BAM files into the \verb|relate| command.
+ShapeMapper~2 does support both Bowtie~2~\cite{Langmead2012} and STAR~\cite{Dobin2013}, the latter of which is a splice-aware aligner.
+
+Every piece of software offers options for selecting and filtering positions and reads, as well as for excluding low-quality base calls, but they differ in specific features.
+For instance, while they all offer automatic quality trimming, ShapeMapper~2 does not support adapter trimming.
+SEISMIC-RNA and RNA Framework (but not ShapeMapper~2 or DREEM) can automatically put reads from the plus and minus RNA strands into separate BAM files, which is essential when the RNA sample contains a mixture of both strands.  They alone can also restrict counting to specific types of mutations, such as A-to-G but not A-to-C or A-to-T substitutions, which is helpful for analyzing other types of mutation-based data, such as ADAR editing, which produces A-to-G substitutions~\cite{Okada2019}.
+All software except DREEM allows users to mask out positions with high mutation rates in an untreated sample: ShapeMapper~2 builds this feature into its main workflow; in SEISMIC-RNA it is possible by processing the untreated sample, finding highly mutated positions with \verb|list|, and masking them with \verb|mask|; with RNA Framework users must list the highly mutated positions manually. ShapeMapper~2 uniquely allows users to correct errors in FASTA files automatically using an untreated control sample (which can be done manually using \verb|samtools consensus|). RNA Framework is the only software to enable downsampling of reads to make the coverage more uniform.
+
+SEISMIC-RNA stands out for its abilities to merge samples and regions. It can pool replicates together without duplicating the underlying data (saving storage space) and then use the pooled samples for all downstream steps including clustering; RNA Framework can combine replicates using \verb|rf-combine|, but only as counts, not reads, so the pooled samples cannot be clustered with DRACO. SEISMIC-RNA is the only software that can join regions together before or after clustering, correctly handling overlaps (e.g. overlapping PCR amplicons) without double-counting them (see ``\nameref{seismic-join}"). It also uniquely features numerous corrections for known artifacts and biases in DMS-MaPseq data, including depletion of mutations due to local alignment (see ``\nameref{seismic-relate}"), dropout of reads with mutations closer than 4~nt (see ``\nameref{mutation-gap-section}"), jackpotting (see ``\nameref{jackpotting-section}"), and marking ambiguous insertions/deletions (see ``\nameref{seismic-relate}"). RNA Framework and DREEM also detect some ambiguous indels, but not all.
+
+Each piece of software provides some built-in tools to analyze and normalize data. SEISMIC-RNA, DanceMapper, and RNA Framework can all calculate Pearson correlations between samples; and SEISMIC-RNA and RNA Framework can calculate ROC curves and AUC-ROC relative to a structure; though SEISMIC-RNA can also calculate rolling correlations and AUC-ROC using a sliding window over the reference. SEISMIC-RNA can measure the amount of structure suggested by mutational profiling data by calculating the rolling Gini index, and RNA Framework can measure heterogeneity of a predicted structure by calculating the rolling Shannon entropy. 
+SEISMIC-RNA and DanceMapper can also find pairs of positions with correlated mutations; in SEISMIC-RNA, these pairs are used primarily to find domains that form multiple clusters; and in DanceMapper to suggest interactions between nucleotides.
+For structure prediction, all software normalizes the data first; SEISMIC-RNA and DREEM use only normalization to a percentile (default 95th), while DanceMapper and RNA Framework can also normalize based on an untreated sample and normalize each type of nucleotide separately.
+
+All the software can model RNA structures based on the mutation rates using RNAstructure~\cite{Reuter2010} as a backend; RNA Framework can also use ViennaRNA~\cite{Lorenz2011}.
+RNA Framework also implements its own version of an algorithm to model pseudoknots, while DREEM uses ShapeKnots~\cite{Hajdin2013} for this purpose; SEISMIC-RNA and DanceMapper do not model pseudoknots.
+RNA Framework also includes a tool (\verb|rf-jackknife|) to optimize the slope and intercept parameters of the function that converts SHAPE mutation rates into pseudoenergies~\cite{Deigan2009}. SEISMIC-RNA does not feature such a tool because it uses a different pseudoenergy function based on DMS~\cite{Cordero2012}.
+Every piece of software can draw predicted RNA structures: SEISMIC-RNA uses RNArtist~\cite{RNArtistCore} as the backend, DanceMapper and RNA Framework draw arc plots, and DREEM uses RNAstructure~\cite{Reuter2010} as the backend. They can also export results as tabular data (e.g. CSV files) and draw several types of graphs; SEISMIC-RNA can generate 13 types of graphs, more than the other software.
+Additionally, SEISMICgraph~\cite{FuchsWightman2025} can load data from all of them to generate a large variety of graphs.
+
+SEISMIC-RNA includes a simulation tool, \verb|seismic sim|, that can simulate FASTQ files of RNA chemical probing data from scratch. It can generate reference sequences and predict their structures -- or use predefined references and structures -- assign a mutation rate for each position and a proportion for each structure (thus the data can be used for clustering), then simulate reads based on the mutation rates and output them as either FASTQ files or data batches like the \verb|relate| step would generate.
+DRACO can also simulate data using its \verb|simulate_mm| tool, which generates mutation map files (which can only be used by RNA Framework and DRACO).
+We used \verb|seismic sim| to simulate all data for benchmarking in this work. In addition to benchmarking, \verb|seismic sim| is useful for planning experiments, e.g. estimating the minimum read coverage or mutation rates one would need to be able to find alternative structures of a certain RNA.
+
+Overall, SEISMIC-RNA has been designed for accuracy, speed, and user-friendliness. 
+It is a single piece of software (unlike DRACO which requires RNA Framework or DanceMapper which requires ShapeMapper~2), so the entire workflow can be run with a single command, \verb|seismic wf|.
+SEISMIC-RNA accepts multiple files and directories as inputs and will process them all in parallel, maximizing the speed at which users can analyze experiments containing large numbers of FASTQ files.
+SEISMIC-RNA, being a Python package, also comes with a Python API (\verb|import seismicrna|) with which users can not only perform everything they can do from the command line but also develop custom data analysis workflows by writing their own Python scripts that incorporate SEISMIC-RNA's functions and classes.
+We anticipate that SEISMIC-RNA will accelerate the analysis of complex mutational profiling experiments and enable new discoveries about RNA structure ensembles.
+
+
+\end{document}

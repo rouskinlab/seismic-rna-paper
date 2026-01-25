@@ -380,7 +380,6 @@ def simulate(num_cpus: int):
                                            reflen - PRIMER_LENGTH,
                                            "",
                                            "\n"])))
-    return
     # Simulate FASTQ files of populations of reads with varying amounts
     # of bias.
     fastqs_pop = list()

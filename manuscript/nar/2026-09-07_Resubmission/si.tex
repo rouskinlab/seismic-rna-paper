@@ -1,0 +1,1328 @@
+\documentclass{article}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{seqsplit}
+\usepackage{array}
+
+% space between list items
+\usepackage{enumitem}
+\setlist{nosep}
+\setlist[description]{leftmargin=1em, labelindent=0pt, labelsep=0.5em}
+
+% margins
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=2cm,bottom=2cm]{geometry}
+
+% Discourage text from running into the margins.
+\emergencystretch \textwidth
+
+% prevent widow/orphan lines over the entire document
+\usepackage[defaultlines=2,all]{nowidow}
+
+% URL formatting
+\usepackage{url}
+
+\usepackage{caption}
+\usepackage{nameref}
+
+% more math commands, like \binom
+\usepackage{amsmath}
+% Number supplementary equations with an "S" (i.e. S1, S2, ...)
+\renewcommand{\theequation}{S\arabic{equation}}
+
+% automatic intradocument links
+\usepackage[colorlinks=false]{hyperref}
+
+\usepackage{cleveref}
+
+% Cross-references to main.tex
+\usepackage{xr-hyper} % after hyperref
+
+% graphics
+\usepackage{graphicx}
+\graphicspath{{si-figures}}
+
+% float positioning
+\usepackage{float}
+
+% wrapped figures
+\usepackage{wrapfig}
+
+% wrapped tables
+\usepackage{tabularray}
+
+% supplementary items
+\usepackage{newfloat}
+\DeclareFloatingEnvironment[name={Supplementary Figure}]{sifigure}
+\DeclareFloatingEnvironment[name={Supplementary Table}]{sitable}
+
+% bibliography
+\usepackage{natbib}
+
+% Greek letters in text mode
+\usepackage{textgreek}
+
+% main typeface
+%\usepackage{fontspec}
+%\setmainfont{Helvetica}
+%\setmonofont{Courier}
+
+% 2.0-line spacing
+\usepackage{setspace}
+\doublespacing
+
+% title and heading typefaces
+\usepackage{titlesec}
+\titleformat{\section}{\singlespacing\LARGE\raggedright\bfseries}{}{0pt}{}
+\titleformat{\subsection}{\singlespacing\Large\raggedright\bfseries}{}{0pt}{}
+\titleformat{\subsubsection}{\singlespacing\large\raggedright\bfseries}{}{0pt}{}
+
+
+\externaldocument{main}
+
+
+% title
+\title{Supplementary Data for ``SEISMIC-RNA: scalable, fully automated RNA structure ensemble analysis with bias correction"}
+\author{Matthew F. Allan\textsuperscript{1,$\dagger$}, Justin Aruda\textsuperscript{1,2,$\dagger$}, and Silvi Rouskin\textsuperscript{1,$\ast$}}
+\date{
+	\textsuperscript{1} Department of Microbiology, Harvard Medical School, Boston, Massachusetts, USA 02115 \\
+	\textsuperscript{2} Harvard Program in Biological and Biomedical Sciences, Division of Medical Sciences, Harvard Medical School, Boston, MA, USA 02115 \\
+    \textsuperscript{$\dagger$} These authors contributed equally to this work. \\
+	\textsuperscript{$\ast$} To whom correspondence should be addressed: \href{email:silvi@hms.harvard.edu}{silvi@hms.harvard.edu} \\
+    Present address: Matthew F. Allan, GlaxoSmithKline PLC, Cambridge, MA 02140, USA \\
+}
+
+
+\begin{document}
+
+
+\begin{singlespace}
+\maketitle
+\end{singlespace}
+
+
+\section{Supplementary Data Tables}
+
+\begin{sitable}[htbp]
+\centering
+\caption{\textit{SMN2} ASO binding quantification -- nucleic acid sequences}
+\label{tab:smn2_sequences}
+\begin{tabular}{@{}p{2.4cm}p{1.9cm}>{\raggedleft\arraybackslash}p{2.1cm}p{6.4cm}@{}}
+\toprule
+\textbf{Name} & \textbf{Type} & \textbf{Length (nt)} & \textbf{Sequence (5$'\rightarrow$3$'$)} \\
+\midrule
+\texttt{SMN2\_F\_T7} &
+Forward primer (T7) & 43 &
+\texttt{\seqsplit{TAATACGACTCACTATAGGGTGCTCACATTCCTTAAATTAAGG}} \\
+\texttt{SMN2\_R} &
+Reverse primer & 26 &
+\texttt{\seqsplit{GTATGCCTAGGTTATCCCATATCACA}} \\
+\texttt{SMN2\_seq\_F} &
+Forward primer & 25 &
+\texttt{\seqsplit{GGTGCTCACATTCCTTAAATTAAGG}} \\
+\texttt{SMN2\_seq\_R} &
+Reverse primer & 23 &
+\texttt{\seqsplit{ATGGCATCATATCCTAAAGCTCT}} \\
+\texttt{ASO} &
+Unmodified ASO & 20 &
+\texttt{\seqsplit{/5Cy5/ATTCACTTTCATAATGCTGG}} \\
+\texttt{SMN2\_Fragment} &
+gBlock & 357 &
+\texttt{\seqsplit{GGTGCTCACATTCCTTAAATTAAGGAGTAAGTCTGCCAGCATTATGAAAGTGAATCTTACTTTTGTAAAACTTTATGGTTTGTGGAAAACAAATGTTTTTGAACATTTAAAAAGTTCAGATGTTAGAAAGTTGAAAGGTTAATGTAAAACAATCAATATTAAAGAATTTTGATGCCAAAACTATTAGATAAAAGGTTAATCTACATCCCTACTAGAATTCTCATACTTAACTGGTTGGTTGTGTGGAAGAAACATACTTTCACAATAAAGAGCTTTAGGATATGATGCCATTTTATATCACTAGTAGGCAGACCAGCAGACTTTTTTTTATTGTGATATGGGATAACCTAGGCATAC}} \\
+\bottomrule
+\end{tabular}
+
+All sequences were synthesized by Integrated DNA Technologies.
+\end{sitable}
+
+\section{Supplementary Figures}
+\label{supp-figures}
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{empirical-distributions.pdf}
+	\caption{\textbf{Properties of empirical data.} For the Morandi et al. (2021)~\cite{Morandi2021} and Lan et al. (2022)~\cite{Lan2022} DMS-MaPseq data on SARS-CoV-2, histograms of the number of informative A/C bases per read (top), the number of mutated bases per read (middle), and the mutation rates per position (bottom).}
+	\label{empirical-distributions}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{nmut-hist-200000.pdf}
+	\caption{\textbf{Histogram of number of mutated bases per read in hit-controlled simulations with 200,000 reads.} For each reference length, the histogram of the number of mutated bases for all 240 RNAs with 200,000 simulated reads (transparent blue). The black line shows the mean among all simulations.}
+	\label{nmut-hist-200000}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{mus-hist-200000.pdf}
+	\caption{\textbf{Histogram of mutation rates in hit-controlled simulations with 200,000 reads.} For each reference length, the histogram of the mutation rates on A and C positions for all 240 RNAs with 200,000 simulated reads (transparent blue). The black line shows the mean among all simulations. The bin size for the histogram is 0.005.}
+    \label{mus-hist-200000}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{mus-hist-200000-rate.pdf}
+	\caption{\textbf{Histogram of mutation rates in rate-controlled simulations with 200,000 reads.} For each reference length, the histogram of the mutation rates on A and C positions for all 200 RNAs with 200,000 simulated reads (transparent blue). The black line shows the mean among all simulations. The bin size for the histogram is 0.005.}
+    \label{mus-hist-200000-rate}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{nmut-hist-200000-rate.pdf}
+	\caption{\textbf{Histogram of number of mutated bases per read in rate-controlled simulations with 200,000 reads.} For each reference length, the histogram of the number of mutated bases for all 200 RNAs with 200,000 simulated reads (transparent blue). The black line shows the mean among all simulations.}
+	\label{nmut-hist-200000-rate}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{draco-sim-properties.pdf}
+	\caption{\textbf{Properties of the data simulated with DRACO's \texttt{simulate\_mm} tool.} \textbf{(A)} Histogram of the mutation rate per A/C base for each RNA (transparent blue) and the mean among all simulations (opaque black). \textbf{(B)} Histogram of the number of mutations per read for each RNA (transparent blue) and the mean among all simulations (opaque black).}
+	\label{draco-sim-properties}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{mutdist-de-lajarte.pdf}
+	\caption{\textbf{Distribution of mutation gaps in the DMS-MaPseq data from de Lajarte et al.~\cite{deLajarte2024}.} Each transparent blue line plots the ratio of observed to expected reads with each mutation gap (the enrichment) for one transcript in the dataset. The black line shows the geometric mean for each mutation gap with a 95\% confidence interval (Student's \textit{t} distribution).}
+	\label{mutdist-de-lajarte}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{dropout-bias-fixed-rate.pdf}
+	\caption{\textbf{Dropout bias causes over-clustering in rate-controlled simulations.} \textbf{(A)} Similar to Figure~\ref{mutation-gap}, but using rate-control instead of hit-control. Lines and shading show means and intervals of one standard deviation, respectively. \textbf{(B)} Without correcting for the bias in mutation gaps, 84\% of simulated datasets incorrectly yielded more than one cluster. With SEISMIC-RNA's bias correction algorithm, all datasets correctly yielded one cluster.}
+	\label{dropout-bias-fixed-rate}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=0.6\textwidth]{jackpotting.pdf}
+	\caption{\textbf{Jackpotting causes false clusters.} (Continued on next page.)}
+	\label{jackpotting}
+\end{sifigure}
+\addtocounter{sifigure}{-1}
+\pagebreak
+\begin{sifigure}[H]
+	\caption[]{(Continued from previous page.) \textbf{(A)} The fraction of 60 FASTQ files (each of a random 280~nt RNA with 1 structure and 200,000 simulated reads) for which SEISMIC-RNA correctly found 1 cluster as a function of the number of rounds of resampling 200,000 reads with replacement. \textbf{(B)} The distribution of jackpotting quotients for each number of rounds of resampling. Horizontal black bars show means. \textbf{(C)} The distribution of the difference in BIC between 2 clusters and 1 cluster for each number of rounds of resampling. Horizontal black bars show means.}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{average-pis-rmse_main-200000.pdf}
+	\caption{\textbf{Accuracy of cluster proportions using 200,000 hit-controlled reads.} Average root-mean-square error (RMSE) between the true cluster proportions and those calculated by SEISMIC-RNA, DanceMapper, DRACO, and DREEM for each length of RNA and true number of clusters. Lower RMSEs are more accurate. Error bars show 95\% confidence intervals.}
+	\label{average-pis-rmse_main-200000}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{vs-reads-correct-k-seismic.pdf}
+	\caption{\textbf{Accuracy of number of clusters versus number of hit-controlled reads without bias correction.} Proportion of simulated FASTQ files for which SEISMIC-RNA with and without bias correction detected the correct number of clusters as a function of number of reads for each reference length and true number of clusters. Higher proportions are more accurate. Error bars show 95\% confidence intervals.}
+	\label{vs-reads-correct-k-seismic}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{vs-reads-correct-k-seismic-rate.pdf}
+	\caption{\textbf{Accuracy of number of clusters versus number of rate-controlled reads without bias correction.} Proportion of simulated FASTQ files for which SEISMIC-RNA with and without bias correction detected the correct number of clusters as a function of number of reads for each reference length and true number of clusters. Higher proportions are more accurate. Error bars show 95\% confidence intervals.}
+	\label{vs-reads-correct-k-seismic-rate}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{vs-reads-correct-k-main.pdf}
+	\caption{\textbf{Accuracy of number of clusters versus number of hit-controlled reads for each software.} Proportion of simulated FASTQ files for which each piece of software detected the correct number of clusters as a function of number of reads for each reference length and true number of clusters. Higher proportions are more accurate. Error bars show 95\% confidence intervals.}
+	\label{vs-reads-correct-k-main}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{vs-reads-correct-k-main-rate.pdf}
+	\caption{\textbf{Accuracy of number of clusters versus number of rate-controlled reads for each software.} Proportion of simulated FASTQ files for which each piece of software detected the correct number of clusters as a function of number of reads for each reference length and true number of clusters. Higher proportions are more accurate. Error bars show 95\% confidence intervals.}
+	\label{vs-reads-correct-k-main-rate}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{vs-reads-mus-pcc-main.pdf}
+	\caption{\textbf{Accuracy of mutation rates versus number of hit-controlled reads for each software.} Average Pearson correlation between the true mutation rates and the mutation rates detected by each piece of software as a function of number of reads for each reference length and true number of clusters. Higher correlations are more accurate. Error bars show 95\% confidence intervals.}
+	\label{vs-reads-mus-pcc-main}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{vs-reads-pis-rmse-main.pdf}
+	\caption{\textbf{Accuracy of cluster proportions versus number of hit-controlled reads for each software.} Average root-mean-square error (RMSE) between the true cluster proportions and the cluster proportions detected by each piece of software as a function of number of reads for each reference length and true number of clusters. Lower RMSEs are more accurate. Error bars show 95\% confidence intervals.}
+	\label{vs-reads-pis-rmse-main}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{draco-sim-benchmarking.pdf}
+	\caption{\textbf{Accuracy of number of clusters, mutation rates, and proportions for SEISMIC-RNA and DRACO using DRACO's simulation tool.} For mutation map (MM) files simulated with DRACO's \texttt{simulate\_mm} tool, the proportion for which SEISMIC-RNA and DRACO detected the correct number of clusters (higher is more accurate), the mean correlation between true and recovered mutation rates (higher is more accurate), and the mean root-mean-square error (RMSE, lower is more accurate) versus the number of reads and true number of clusters. Error bars show 95\% confidence intervals.}
+	\label{draco-sim-benchmarking}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{speed.pdf}
+	\caption{\textbf{Speed of SEISMIC-RNA, DREEM, DRACO, and DanceMapper on hit-controlled simulations of 280~nt RNAs with 200,000 reads.} The time taken for every program to run the entire workflow (alignment to clustering) on each simulated dataset with 2 or 4 clusters is shown, along with the mean (vertical black line). For comparability, the runtimes of DRACO and DanceMapper include preprocessing with RNA Framework and ShapeMapper 2, respectively. Only results with the correct number of clusters were used for scoring the runtime, so that any cases where a program yielded the wrong result quickly would not make it appear to have a speed advantage.}
+	\label{speed}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{clusterscan-hit-control.pdf}
+	\caption{\textbf{Number of clusters detected at each position in long transcripts with hit-controlled simulations.} \textbf{(A)} Location, length, and number of clusters formed by each ground truth domain in every 1,200~nt RNA. \textbf{(B)} Fraction of 60 simulated 1,200~nt RNAs with hit-control for which SEISMIC-RNA and DRACO detected each number of clusters at each position. Cluster numbers are cumulative: $y = 2$ means the fraction of simulations yielding $\ge 2$ clusters, $y = 3$ means $\ge 3$ clusters, and so on. \textbf{(C)} The rolling Pearson correlation (45~nt window size) between the true mutation rates and detected mutation rates for each of the 60 simulated RNAs analyzed with SEISMIC-RNA (transparent blue) or DRACO (transparent orange). Black lines show the average correlations among all simulations. \textbf{(D)} Total runtime for processing each simulation with SEISMIC-RNA and DRACO / RNA Framework, including alignment, mutation calling, and clustering; black vertical lines show averages.}
+	\label{clusterscan-hit-control}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{clusterscan-rate-control.pdf}
+	\caption{\textbf{Number of clusters detected at each position in long transcripts with rate-controlled simulations.} \textbf{(A)} Location, length, and number of clusters formed by each ground truth domain in every 1,200~nt RNA. \textbf{(B)} Fraction of 50 simulated 1,200~nt RNAs with rate-control for which SEISMIC-RNA and DRACO detected each number of clusters at each position. Cluster numbers are cumulative, as in Supplementary Figure~\ref{clusterscan-hit-control}. \textbf{(C)} The rolling Pearson correlation (45~nt window size) between the true mutation rates and detected mutation rates for each of the 50 simulated RNAs analyzed with SEISMIC-RNA (transparent blue) or DRACO (transparent orange). Black lines show the average correlations among all simulations. \textbf{(D)} Total runtime for processing each simulation with SEISMIC-RNA and DRACO / RNA Framework, including alignment, mutation calling, and clustering; black vertical lines show averages.}
+	\label{clusterscan-rate-control}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{sars2_clusters_3utr.pdf}
+	\caption{\textbf{Conformations of part of the SARS-CoV-2 3' UTR (positions 29,548-29,903).} For both clusters of the cluster-forming domain in the 3' UTR (positions 29,548-29,664), the predicted structure with the highest area under the receiver operating characteristic curve (AUC-ROC) is drawn. The percentage and AUC-ROC of each cluster are also shown. Bases are colored by normalized DMS reactivity. The mutually exclusive bulged stem loop (BSL) and pseudoknot (PK) are annotated, along with stems 1-4 (S1-S4) and the hypervariable region (HVR), according to prior literature~\cite{Yang2015a}.}
+	\label{sars2_clusters_3utr}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{sars2_clusters_fse.pdf}
+	\caption{\textbf{Conformations of the SARS-CoV-2 frameshift element and flanking sequences (positions 13,172-14,970).} For each of the four clusters formed by the domain overlapping the Frameshift Element (light orange, positions 13,339-13,592), the predicted structure with the highest area under the receiver operating characteristic curve (AUC-ROC) is shown as an arc plot. Structures drawn in orange contain the long-range interaction that we had previously hypothesized~\cite{Lan2022}; those drawn in blue do not, or contain different long-range interactions.}
+	\label{sars2_clusters_fse}
+\end{sifigure}
+\pagebreak
+
+
+\begin{sifigure}[H]
+	\includegraphics[width=\textwidth]{features.pdf}
+	\caption{\textbf{Select features of each piece of software for RNA ensemble analysis.} This list is not comprehensive and shows only features relevant to mutational profiling. For DanceMapper~\cite{Olson2022} and DRACO~\cite{Morandi2021}, this chart includes the features of ShapeMapper~2~\cite{Busan2018} and RNA Framework~\cite{Incarnato2018}, respectively, which are required for preprocessing the data before clustering. For each feature that is ``Partially" supported, an explanation of what specifically is supported is given in the right column.}
+	\label{features}
+\end{sifigure}
+\pagebreak
+
+
+\section{Supplementary Methods}
+\label{supp-methods}
+
+\subsection{Converting alignment maps into matrices of relationships}
+
+\subsubsection{Encoding relationships between the read and reference}
+\label{relationship-codes}
+
+There are eight types of primary relationships between a base call in the read and the corresponding position in the reference sequence.
+These relationships are encoded as bits in an 8-bit (1-byte) integer: \\
+
+\begin{tabular}{ l r r }
+\hline
+\textbf{Primary Relationship} & \textbf{Binary (8-bit)} & \textbf{Decimal} \\
+\hline
+Match & 00000001 & 1 \\
+Deletion in the read & 00000010 & 2 \\
+5' of an Insertion in the read & 00000100 & 4 \\
+3' of an Insertion in the read & 00001000 & 8 \\
+Substitution to A & 00010000 & 16 \\
+Substitution to C & 00100000 & 32 \\
+Substitution to G & 01000000 & 64 \\
+Substitution to T & 10000000 & 128 \\
+\hline
+\end{tabular} \\
+
+Ambiguous relationships can be represented via the bitwise OR of primary relationships.
+A relationship code signifies that the relationship could be any of the bits of which it is made.
+For example, if a base call in the read has a low quality score, then it is assumed that the true base in the read could be any of the four bases.
+If the base at the corresponding position in the reference is an A, then the base call in the read could be either a match (if it were truly an A) or a substitution to C, G, or T (if it were truly any of those bases).
+Hence, the relationship code is 11100001: the bitwise OR of match and substitutions to C, G, and T.
+There are several common ambiguous relationships: \\
+
+\begin{tabular}{ l r r }
+\hline
+\textbf{Ambiguous Relationship} & \textbf{Binary (8-bit)} & \textbf{Decimal} \\
+\hline
+Paired-end mates contradict each other & 00000000 & 0 \\
+Ambiguously Match or Deletion & 00000011 & 3 \\
+Ambiguously Match or 5' of an Insertion & 00000101 & 5 \\
+Ambiguously Match or 3' of an Insertion & 00001001 & 9 \\
+Read is low-quality or N; reference is T & 01110001 & 113 \\
+Read is low-quality or N; reference is G & 10110001 & 177 \\
+Read is low-quality or N; reference is C & 11010001 & 209 \\
+Read is low-quality or N; reference is A & 11100001 & 225 \\
+Reference is N (ambiguous/unknown) & 11110001 & 241 \\
+The read does not cover the position & 11111111 & 255 \\
+\hline
+\end{tabular} \\
+
+The relationship between a base in the reference and a base in the read is determined as follows:
+\begin{enumerate}
+    \item If the reference base is not A, C, G, or T, then the relationship code is 11110001.
+    \item Otherwise, if the read base is not A, C, G, or T; or if its quality score is below the minimum, then the relationship code is 11110001 minus the bit corresponding to a substitution to the reference base (from the table above).
+    \item Otherwise, if the read base matches the reference base, then the relationship code is 00000001.
+    \item Otherwise, the relationship code is a substitution to the base in the read (from the table above).
+\end{enumerate}
+
+\subsubsection{Storing mutational profiling data in a sparse structure}
+
+In chemical probing experiments, mutations occur at low rates.
+Consequently, a sparse data structure is much more efficient at storing mutational profiling data than a full matrix of reads by positions -- especially when the reference is much longer than the reads.
+
+The positions of the ends of the reads are stored as two NumPy arrays~\cite{Harris2020} -- one for the 5' and one for the 3' ends.
+Each row in the array corresponds to one read in a batch, and each column corresponds to one segment in the read: single-end reads have one segment, paired-end reads have two. 
+Additionally, using \verb|seismic join| causes the arrays to be concatenated horizontally, increasing the number of segments per read.
+
+The relationships between the read and reference are stored as a three-level data structure:
+\begin{enumerate}
+    \item The first level is a Python \verb|dict| in which each key is a position in the reference sequence and each value is a Python \verb|dict|.
+    \item In the second level, for each Python \verb|dict| each key is a relationship code (see ``\nameref{relationship-codes}") and each value is a NumPy array~\cite{Harris2020}.
+    \item In the third level, each NumPy array contains the indexes of the reads in the batch that have the relationship code (second level) at the position (first level).
+\end{enumerate}
+
+\subsubsection{Converting aligned reads into vectors of relationships}
+\label{relationship-vector}
+
+Each alignment map is collated and converted into a SAM file using SAMtools~\cite{Danecek2021}.
+Each read in the SAM file is then parsed to generate a vector of relationships to the reference sequence as follows:
+\begin{enumerate}
+    \item Initialize the position in the read to 1 and the position in the reference to the mapping position in the SAM file~\cite{Li2009}.
+    \item Initialize the 5' and 3' ends of the read to 1 and the read length (in read coordinates).
+    \item Initialize empty lists of the 5' and 3' ends of segments in the read.
+    \item Initialize an empty map of positions to their relationship codes (only for non-matches, to save effort).
+    \item Initialize an empty list of insertions and deletions (``indels").
+    \item Loop over each operation in the CIGAR string~\cite{Li2009} and act based on the type of operation:
+    \begin{description}
+        \item[Match or Substitution (M/X/=):] For the length of the operation:
+        \begin{enumerate}
+            \item Use the base in the reference, the base in the read, and the read quality to encode the relationship between the read and the reference (for details, see ``\nameref{relationship-codes}").
+            \item Map the current position in the reference to the relationship if it is not a match.
+            \item Increment the positions in both the read and reference.
+        \end{enumerate}
+        \item[Deletion (D):] For the length of the operation:
+        \begin{enumerate}
+            \item Map the current position in the reference to the deletion relationship (for details, see ``\nameref{relationship-codes}".
+            \item Add a deletion to the list of indels.
+            \item Increment the position in the reference.
+        \end{enumerate}
+        \item[Insertion (I):] For the length of the operation:
+        \begin{enumerate}
+            \item Add an insertion to the list of indels. (Do not map the reference position to an insertion yet; that will happen later.)
+            \item Increment the position in the read.
+        \end{enumerate}
+        \item[Intron or other Skipped Region (N):] This is the end of a contiguous segment:
+        \begin{enumerate}
+            \item Add the current position in the reference to the list of segment 3' ends.
+            \item Advance the reference position by the length of the operation.
+            \item Add the new position in the reference to the list of segment 5' ends (so that a new segment can begin).
+        \end{enumerate}
+        \item[Soft Clip (S):] The 5' or 3' end must be clipped off:
+        \begin{enumerate}
+            \item Determine the location of the soft clip:
+            \begin{description}
+                \item[5' end:] Increase the 5' end of the read by the length of the operation (to clip off the first bases).
+                \item[3' end:] Decrease the 3' end of the read by the length of the operation (to clip off the last bases).
+                \item[Otherwise:] The location is invalid. Raise an error.
+            \end{description}
+            \item Increase the position in the read by the length of the operation.
+        \end{enumerate}
+        \item[Otherwise:] The operation is not supported. Raise an error.
+    \end{description}
+    \item Add any insertions to the map of positions to relationships. Insertions must be added last because they can overlap other types of relationships. For each insertion:
+    \begin{enumerate}
+        \item Determine which reference position to mark: the 3' (default) or 5' side of the insertion. Each insertion is located between two positions in the reference; only one is marked to avoid double-counting. If marking the 5' side, use the code 00000100; if the 3' side, use 00001000 (for an explanation, see ``\nameref{relationship-codes}").
+        \item If the position to be marked already appears in the map because it has another mutation, then add the insertion code on top of the existing relationship code using bitwise OR. For example, if the position 3' of an insertion were already a substitution to T (10000000), then the result would be 10001000 after marking the insertion.
+    \end{enumerate}
+    \item Mark ambiguous indels (for details, see ``\nameref{ambiguous-indels}").
+    \item Determine the positions of the 5' and 3' ends of the read's footprint in the reference.
+    Clip a user-specified number of bases $n$ from both ends of the reference to counteract the bias against mutations near the ends of reads that happens during local alignment (for an explanation, see ``\nameref{seismic-idmut}" in the \nameref{methods}):
+    \begin{enumerate}
+        \item Set the 5' end to the smaller of
+        \begin{itemize}
+            \item the read's mapping position in the SAM file plus $n$
+            \item the reference length plus 1
+        \end{itemize}
+        \item Set the 3' end to the larger of
+        \begin{itemize}
+            \item the last position reached in the reference minus $n$
+            \item 0
+        \end{itemize}
+    \end{enumerate}
+    \item Prepend the 5' end of the read's footprint in the reference to the list of segment 5' ends -- it begins the first segment of the read. Append the 3' end of the read's footprint in the reference to the list of segment 3' ends -- it ends the last segment of the read.
+    \item Remove from the relationship map any positions that are no longer contained in any segment after clipping $n$ positions from both ends.
+\end{enumerate}
+
+\subsubsection{Merging the relationships of paired-end reads}
+
+If the reads are paired-end and two mates are properly paired, then after both mates are processed as described in ``\nameref{relationship-vector}", several more steps are required to merge them:
+\begin{enumerate}
+    \item Ensure that one mate (can be either 1 or 2) aligns in the forward orientation and the other aligns in the reverse orientation (if not, raise an error).
+    \item If (optionally) removing overhangs of mates that dovetail:
+    \begin{enumerate}
+        \item For each segment of the reverse-aligned read, if its 5' end extends beyond the forward-aligned read, then trim it so that it is flush with the 5' end of the forward-aligned read. Remove any position-relationship mappings in the trimmed part.
+        \item For each segment of the forward-aligned read, if its 3' end extends beyond the reverse-aligned read, then trim it so that it is flush with the 3' end of the reverse-aligned read. Remove any position-relationship mappings in the trimmed part.
+    \end{enumerate}
+    \item Concatenate the segment 5' and 3' end positions from both mates, putting the segment(s) of the forward-aligned mates first and those of the reverse-aligned mates last.
+    \item Initialize a merged map of positions to relationships. For each position that occurs in the position-relationship map of at least one mate:
+    \begin{enumerate}
+        \item Find the relationship at that position in the forward-aligned mate.
+        \begin{itemize}
+            \item If the position is in the forward mate's map (because it is a mutation), then use the relationship code from the map.
+            \item If the position is not in the map but lies within any segment of the forward mate, then the position is a match (code 00000001).
+            \item Otherwise, the position is not covered by the mate (code 11111111).
+        \end{itemize}
+        \item Find the relationship at that position in the reverse-aligned mate using the same procedure.
+        \item Take the bitwise AND of the forward and reverse mates' relationship codes. This limits the possible relationships to those on which the mates agree. It also lets one mate compensate for low quality or lack of coverage in the other mate. For example, if the reference base was an A, mate 1 was low quality (code 11100001), and mate 2 was a high-quality substitution to T (code 10000000), then the bitwise AND would be a substitution to T.
+        \item If the bitwise AND is not a match (code 00000001), then add it to the merged map of positions to relationships.
+    \end{enumerate}
+\end{enumerate}
+
+
+\subsubsection{Detecting and labeling ambiguous insertions and deletions}
+\label{ambiguous-indels}
+
+When insertions and deletions (collectively ``indels") occur in repetitive regions or next to substitutions or low-quality base calls, it can be impossible to assign them unambiguously to one position.
+For example, if the reference sequence were AGCCTA and a read were AGCTA, then it would be clear that one C had been deleted, but impossible to determine which.
+Aligners like Bowtie 2~\cite{Langmead2012} will arbitrarily choose a location for the indel, but it may not be the true location.
+To avoid labeling the wrong positions as indels, all indels with ambiguous locations must be identified and labeled.
+
+First, all indels and their locations are listed during the relationship encoding process (for details, see ``\nameref{relationship-vector}".
+Each indel keeps track of two positions:
+\begin{description}
+    \item[Inline position:] The position in the sequence that contains the base. It must be \textbf{unique} among indels.
+    \begin{description}
+        \item[For a deletion,] this is the position in the \textbf{reference} of the base that has been deleted from the read.
+        \item[For an insertion,] this is the position in the \textbf{read} of the base that has been inserted into the read.
+    \end{description}
+    \item[Lateral position:] The position in the sequence that is missing the base. Because the base is absent, it does not correspond to a position in the sequence, so the position of the existing base on either side must be used instead (hence ``lateral" position). By convention the position of the base immediately 3' of the missing base is used as the lateral position. Adjacent indels will have the \textbf{same} lateral position.
+    \begin{description}
+        \item[For a deletion,] this is the position in the \textbf{read} of the base immediately 3' of the deletion.
+        \item[For an insertion,] this is the position in the \textbf{reference} of the base immediately 3' of the insertion.
+    \end{description}
+\end{description} 
+
+Indels of the same type (namely, insertion or deletion) that do not have another indel of the other type between them are grouped into ``pods".
+Indels do not need to occur at consecutive positions to be in the same pod: there just needs to be no indel of the other type between them.
+For example, suppose a read had deletions at reference positions 20, 45, and 103; and insertions at positions 68 and 72.
+It would have three pods:
+\begin{enumerate}
+    \item Deletions 20 and 45
+    \item Insertions 68 and 72
+    \item Deletion 103
+\end{enumerate}
+
+The algorithm discovers all possible ways the indels could move without changing the read-reference relationships (hence why the locations are ambiguous) under the constraint that two pods never move past each other.
+(This constraint is necessary for computational tractability because it allows processing each pod independently; in practice it almost never makes a difference in the result.)
+It works as follows, in two major phases:
+\begin{enumerate}
+    \item In the first phase, all indels are moved as far as possible in the 5' direction.
+    To avoid one pod blocking another's movement, the 5'-most pod must be moved first.
+    For each pod in order from 5' to 3':
+    \begin{enumerate}
+        \item Ensure the indels in the pod are sorted from 5' to 3'.
+        \item Given that the pod contains $n$ indels, initialize a pointer $i$ to indel $n$ (the 3'-most indel).
+        The 3'-most indel must be moved first in order to handle multi-base deletions.
+        \item While $i \ge 1$ (the 5'-most indel):
+        \begin{enumerate}
+            \item Compute a set of three trial positions to which to try moving indel $i$:
+            \begin{description}
+                \item[Trial inline position:] Set it to one position 5' of the indel's current inline position.
+                Because inline positions must be unique, keep moving it one position 5' until it does not match the inline position of any other indel.
+                This prevents the trial inline position from matching the inline position of any adjacent indel.
+                \item[Trial lateral position:] Set it to the position 5' of the indel's current lateral position.
+                \item[Trial swap position:] The position in the sequence that is missing the base with which the indel is trying to swap.
+                Set it to the lateral position on the 5' side of the indel.
+            \end{description}
+            \item Check whether the trial move is valid, if all of the following are true:
+            \begin{itemize}
+                \item The trial inline position is within the bounds of the reference sequence (if a deletion) or read sequence (if an insertion).
+                \item The move would not cause the indel to collide with any indel in an adjacent pod, based on the trial lateral position.
+                \item The relationships would be consistent before and after moving the indel:
+                \begin{enumerate}
+                    \item Find the base with which the indel would swap during the move (located at the trial swap position).
+                    \begin{description}
+                        \item[For a deletion:] the base in the read immediately 5' of the site of the deletion.
+                        \item[For an insertion:] the base in the reference immediately 5' of the site of the insertion.
+                    \end{description}
+                    \item Find the base at the current inline position.
+                    \begin{description}
+                        \item[For a deletion:] the base in the reference that is deleted from the read.
+                        \item[For an insertion:] the base that is inserted into the read.
+                    \end{description}
+                    \item Find the base at the trial inline position.
+                    \begin{description}
+                        \item[For a deletion:] the base in the reference that would be marked as deleted if the deletion moved.
+                        \item[For an insertion:] the base in the read that would be marked as inserted if the insertion moved.
+                    \end{description}
+                    \item Using the method in ``\nameref{relationship-codes}", compute the relationships between the swap base and
+                    \begin{itemize}
+                        \item the base at the current inline position
+                        \item the base at the trial inline position
+                    \end{itemize}
+                    \item The relationships are consistent if either of the following is true:
+                    \begin{itemize}
+                        \item The relationship codes have at least one bit in common (the bitwise AND is not zero).
+                        \item Both relationships are substitutions to any base (not necessarily to the same base).
+                    \end{itemize}
+                \end{enumerate}
+            \end{itemize}
+            \item If the move is valid, then move the indel to the trial position.
+            \begin{description}
+                \item[For a deletion:] The deletion moves from the current inline position to the trial inline position in the reference.
+                Meanwhile, the swap base in the read moves from the trial inline position to the current inline position.
+                \begin{enumerate}
+                    \item To the current inline position, mark (with bitwise OR) the relationship between it and the swap base, which moves to that position.
+                    \item To the trial inline position, mark (with bitwise OR) the code for the deletion (00000010), which moves to that position.
+                    \item Move the deletion's inline and lateral positions to the trial positions.
+                \end{enumerate}
+                \item[For an insertion, if marked on the 5' side:] The insertion moves from the current inline position to the trial inline position in the read.
+                Meanwhile, the swap base in the reference moves from the trial inline position to the current inline position.
+                \begin{enumerate}
+                    \item Move the insertion's inline and lateral positions to the trial positions.
+                    \item On the 5' side after the move, mark (with bitwise OR) the code for the insertion.
+                    \item On the 3' side after the move, mark (with bitwise OR) the relationship between the current inline position and the swap base.
+                    If that relationship is a match, then mark it only if that position is not immediately 5' of another insertion.
+                \end{enumerate}
+                \item[For an insertion, if marked on the 3' side:] The insertion moves from the current inline position to the trial inline position in the read.
+                Meanwhile, the swap base in the reference moves from the trial inline position to the current inline position.
+                \begin{enumerate}
+                    \item On the 3' side before the move, mark (with bitwise OR) the relationship between the read and reference at that position.
+                    (If that relationship is a match, then it will have been marked as 3' of an insertion, not a match, so because the insertion is moving it must now also be marked as a match.)
+                    \item Move the insertion's inline and lateral positions to the trial positions.
+                    \item On the 3' side after the move, mark (with bitwise OR) the codes for the insertion and for the relationship between the current inline position and the swap base (if it's not a match).
+                \end{enumerate}
+            \end{description}
+            \item If any indel moved through another indel, then re-sort the indels in the pod so that they are still in 5' to 3' order.
+            \item If the move was not valid, then decrement $i$.
+            This means that this indel has no more valid moves in the 5' direction, so the next indel must be tried.
+        \end{enumerate}
+    \end{enumerate}
+    \item In the second phase, all indels are moved as far as possible in the 3' direction.
+    Unlike in the first phase, also detect all possible permutations of indels as they move.
+    It works the same way as the first phase, with two exceptions:
+    \begin{itemize}
+        \item Movements and sorting are in the opposite direction: all 5' and 3' labels in the first phase are swapped.
+        \item If an indel is moved successfully, then adjust $i$ to point at that indel again, rather than keeping $i$ unchanged.
+        For example, if $i$ were 1 and the indel in 1st place in the pod wound up in 2nd place after it moved and the indels were re-sorted, then adjust $i$ to 2.
+        This adjustment is necessary to consider all possible permutations of indels in the second phase, which searches more exhaustively than the first phase.
+    \end{itemize}
+\end{enumerate}
+
+
+\subsection{Correcting bias due to underrepresentation of reads with nearby mutations}
+\label{bias-correction-algorithm}
+
+Two mutations closer than $g$ bases in the same read are handled in one of two ways, depending on the reverse transcriptase used.
+With group II intron reverse transcriptases (e.g. TGIRT-III and Induro~RT, used for DMS-MaPseq), a read containing two mutations closer than $g$ bases tends to drop out of the data, so such reads are discarded to make the data consistent with the model; this bias and its correction are derived in this subsection.
+With retroviral reverse transcriptases (e.g. SuperScript~II, used for SHAPE-MaP), a modification instead induces extra mutations at nearby non-modified positions, so mutations closer than $g$ bases are merged rather than dropped (for details, see ``\nameref{merge-correction-algorithm}").
+The option \verb|--mut-collisions| selects between dropping and merging; by default, \verb|--probe DMS| drops (with $g = 4$) and \verb|--probe SHAPE| or \verb|--probe ETC| merges (with $g = 2$).
+
+Let $N$ reads from $K$ clusters align to a reference sequence of length $J$.
+Let the proportion of reads whose 5' and 3' ends align, respectively, to coordinates $a$ and $b$ ($1 \le a \le b \le J$) be $\eta_{ab}$ (assuming these proportions are equal for all clusters). Let the mutation rate of base $j$ ($1 \le j \le J$) in cluster $k$ ($1 \le k \le K$) be $\mu_{jk}$.
+Let the proportion of cluster $k$ in the ensemble be $\pi_k$.
+To express these quantities as probabilities, let $C_k$ be the event that a read comes from cluster $k$; let $E_{ab}$ be the event that a read aligns with 5' and 3' coordinates $a$ and $b$, respectively; let $S_j$ be the event that a read contains position $j$ (i.e. its alignment coordinates $a$ and $b$ satisfy $1 \le a \le j \le b \le J$); let $M_j$ be the event that a read has a mutation at position $j$; and let $G_g$ be the event that a read has no two mutations separated by fewer than $g$ non-mutated bases.
+
+\subsubsection{Deriving mutation rates of reads with no two mutations too close}
+\label{calc_p_mut_noclose}
+
+In terms of these events, the total mutation rates ($\mu_{jk}$) are $P(M_j | S_j C_k)$, i.e. the probability that a read would have a mutation at position $j$ given that it contained position $j$ and came from cluster $k$; and the observable mutation rates ($m_{jk}$) are $P(M_j | S_j C_k G_g)$, i.e. the probability that a read would have a mutation at position $j$ given that it contained position $j$, came from cluster $k$, and had no two mutations closer than $g$ bases.
+Using these definitions and Bayes' theorem yields a probabilistic formula for $m_{jk}$:
+\begin{equation}
+    m_{jk} = P(M_j | S_j C_k G_g) = P(M_j | S_j C_k) \frac{P(G_g | S_j M_j C_k)}{P(G_g | S_j C_k)} = \mu_{jk} \frac{P(G_g | S_j M_j C_k)}{P(G_g | S_j C_k)}
+\end{equation}
+
+The term $P(G_g | S_j C_k)$ is the probability that a read would have no two mutations closer than $g$ bases given that it contained position $j$ and came from cluster $k$.
+It can be computed using $P(G_g | E_{ab} C_k)$ (abbreviated $d_{abk}$): the probability that a read would contain no two mutations closer than $g$ bases given that its 5' and 3' coordinates are $a$ and $b$, respectively ($1 \le a \le b \le J$), and that it came from cluster $k$.
+If position $b$ were mutated (probability $\mu_{bk}$), then the read would contain no two mutations closer than $g$ bases if and only if none of the $g$ bases preceding $b$ (i.e. positions $b - g$ to $b - 1$, inclusive) were mutated (probability $\prod_{j'=\max(b-g, a)}^{b-1}(1 - \mu_{j'k})$, abbreviated $w_{\max(b-g, a),b-1,k}$) and no two mutations between positions $a$ and $b - (g + 1)$, inclusive, were too close (probability $d_{a,\max(b-(g+1), a),k})$).
+If position $b$ were not mutated (probability $1 - \mu_{bk}$), then the read would contain no two mutations closer than $g$ bases if and only if no mutations between positions $a$ and $b - 1$, inclusive, were too close (probability $d_{a,\max(b-1,a),k}$).
+These two possibilities generate a recurrence relation:
+\begin{equation}
+    d_{abk} = \mu_{bk} w_{\max(b-g, a),b-1,k} d_{a,\max(b-(g+1), a),k} + (1 - \mu_{bk}) d_{a,\max(b-1,a),k}
+\end{equation}
+The base case is $d_{abk} = 1$ when $a = b$ because such a read would contain one position and thus be guaranteed to have no two mutations too close.
+Then, $P(G_g | S_j C_k)$ is the average of $d_{abk}$ over every read that contains position $j$, weighted by the proportions $\eta_{ab}$:
+\begin{equation}
+    P(G_g | S_j C_k) = \frac{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab}d_{abk}}{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab}}
+\end{equation}
+
+The term $P(G_g | S_j M_j C_k)$ is the probability that a read would have no two mutations too close given that it contained a mutation at position $j$ and came from cluster $k$.
+It can be computed using $P(G_g | M_j E_{ab} C_k)$ (abbreviated $f_{abjk}$): the probability that a read would contain no two mutations too close given that position $j$ is mutated ($1 \le a \le j \le b \le J$), that its 5' and 3' coordinates are $a$ and $b$ (respectively), and that it came from cluster $k$.
+Because position $j$ is mutated, having no two mutations too close requires that none of the $g$ bases on both sides of position $j$ be mutated.
+The probability that none of the preceding $g$ positions ($j - g$ to $j - 1$) is mutated is $w_{\max(j-g,a),j-1,k}$, while that of the following $g$ positions ($j + 1$ to $j + g$) is $w_{j+1,\min(j+g,b),k}$.
+Upstream of the $g$ bases flanking position $j$ (i.e. positions $a$ to $j - (g + 1)$), the probability that no two mutations are too close is $d_{a,\max(j-(g+1),a),k}$; downstream (i.e. positions $j + (g + 1)$ to $b$), the probability is $d_{\min(j+(g+1),b),b,k}$.
+Since mutations in these four sections are independent, the probability that the read contains no two mutations too close is the product:
+\begin{equation}
+    f_{abjk} = d_{a,\max(j-(g+1),a),k} w_{\max(j-g,a),j-1,k} w_{j+1,\min(j+g,b),k} d_{\min(j+(g+1),b),b,k}
+\end{equation}
+Then, $P(G_g | S_j M_j C_k)$ is the average of $f_{abjk}$ over every read that contains position $j$, weighted by the proportions $\eta_{ab}$.
+\begin{equation}
+    P(G_g | S_j M_j C_k) = \frac{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab} f_{abjk}}{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab}}
+\end{equation}
+
+Combining the above results yields an explicit formula for $m_{jk}$:
+\begin{equation}
+    m_{jk} = \mu_{jk} \frac{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab} f_{abjk}}{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab}d_{abk}}
+\end{equation}
+
+\subsubsection{Deriving end coordinate proportions of reads with no two mutations too close}
+\label{calc_p_ends_noclose}
+
+The total proportions ($\eta_{ab}$) of reads aligned to 5' and 3' coordinates $a$ and $b$, respectively, are $P(E_{ab})$; and the proportions of reads with no two mutations too close that align with coordinates $a$ and $b$ ($e_{abk}$) are $P(E_{ab} | G_g C_k)$.
+Using these definitions and Bayes' theorem yields a probabilistic formula for $e_{abk}$:
+\begin{equation}
+    e_{abk} = P(E_{ab} | G_g C_k) = P(G_g | E_{ab} C_k) \frac{P(E_{ab} | C_k)}{P(G_g | C_k)} = d_{abk} \frac{\eta_{ab}}{P(G_g | C_k)}
+\end{equation}
+
+Note that, while reads are assumed to come from the same distribution of coordinates ($\eta_{ab}$) regardless of their cluster $k$, the observable distribution of coordinates ($e_{abk}$) varies by cluster because $d_{abk}$ and $P(G_g | C_k)$ depend on $k$.
+The term $P(G_g | C_k)$ is the probability that a read would have no two mutations too close given that it came from cluster $k$.
+It can be computed as an average of $P(G_g | E_{ab} C_k)$ (i.e. $d_{abk}$) over all coordinates $a$ and $b$ (such that $1 \le a \le b \le J$), weighted by the proportion of each coordinate, $P(E_{ab})$ (i.e. $\eta_{ab}$):
+\begin{equation}
+    P(G_g | C_k) = \frac{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab}} = \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}
+\end{equation}
+This expression is already normalized because $\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} = 1$, by definition.
+
+Combining the above results yields an explicit formula for $e_{abk}$:
+\begin{equation}
+    e_{abk} = \frac{\eta_{ab} d_{abk}}{\sum_{a'=1}^{J} \sum_{b'=a'}^{J} \eta_{a'b'} d_{a'b'k}}
+\end{equation}
+
+\subsubsection{Deriving cluster proportions of reads with no two mutations too close}
+\label{calc_p_clust_noclose}
+
+The proportion of total reads in cluster $k$ is $\pi_k = P(C_k)$.
+The proportion among only reads with no two mutations closer than $g$ bases is
+\begin{equation}
+    p_k = P(C_k | G_g) = P(G_g | C_k) \frac{P(C_k)}{P(G_g)} = \pi_k \frac{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}{P(G_g)}
+\end{equation}
+The term $P(G_g)$ is the probability that a read from any cluster would have no two mutations closer than $g$ bases and can be solved for by leveraging that the cluster proportions ($p_k$) must sum to 1:
+\begin{equation}
+    1 = \sum_{k=1}^{K} p_k = \sum_{k=1}^{K} \pi_k \frac{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}{P(G_g)} = \frac{1}{{P(G_g)}} \sum_{k=1}^{K} \pi_k \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}
+\end{equation}
+\begin{equation}
+    P(G_g) = \sum_{k=1}^{K} \pi_k \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}
+\end{equation}
+The result is an explicit formula for $p_k$:
+\begin{equation}
+    p_k = \frac{\pi_k \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}{\sum_{k'=1}^{K} \pi_{k'} \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk'}}
+\end{equation}
+
+\subsubsection{Solving total mutation rates and cluster and coordinate proportions}
+\label{calc_params}
+
+The observed mutation rates ($m_{jk}$), end coordinate proportions ($e_{abk}$), and cluster proportions ($p_k$) can be calculated as weighted averages over the $N$ reads with no two mutations too close:
+\begin{equation}
+    m_{jk} = \frac{\sum_{i=1}^{N} z_{ik} x_{ij}}{\sum_{i=1}^{N} z_{ik} s_{ij}}
+\end{equation}
+\begin{equation}
+    e_{abk} = \frac{\sum_{i=1}^{N} z_{ik} y_{abi}}{\sum_{i=1}^{N} z_{ik}}
+\end{equation}
+\begin{equation}
+    p_k = \frac{\sum_{i=1}^{N} z_{ik}}{N}
+\end{equation}
+where $s_{ij}$ is $1$ if read $i$ contains position $j$, otherwise $0$; $x_{ij}$ is $1$ if read $i$ has a mutation at position $j$, otherwise $0$; $y_{abi}$ is $1$ if read $i$ aligns to coordinates $a$ and $b$, otherwise $0$; and $z_{ik}$ is the probability that read $i$ came from cluster $k$.
+
+The original parameters $\mu_{jk}$, $\eta_{abk}$, and $\pi_k$ can be solved by setting the two formulae each for $m_{jk}$, $e_{abk}$, and $p_k$ equal to each other, creating a system of equations:
+\begin{equation}
+    \mu_{jk} \frac{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab} f_{abjk}}{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab}d_{abk}} = m_{jk} = \frac{\sum_{i=1}^{N} z_{ik} x_{ij}}{\sum_{i=1}^{N} z_{ik} s_{ij}}
+\end{equation}
+\begin{equation}
+    \eta_{ab} \frac{d_{abk}}{\sum_{a'=1}^{J} \sum_{b'=a'}^{J} \eta_{a'b'} d_{a'b'k}} = e_{ab} = \frac{\sum_{i=1}^{N} z_{ik} y_{abi}}{\sum_{i=1}^{N} z_{ik}}
+\end{equation}
+\begin{equation}
+    \pi_k \frac{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}{\sum_{k'=1}^{K} \pi_{k'} \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk'}} = p_k = \frac{\sum_{i=1}^{N} z_{ik}}{N}
+\end{equation}
+Solving this entire system at once has proven computationally impractical for all but extremely short sequences.
+A more feasible approach is to first solve for $\mu_{jk}$ given an initial guess for $\eta_{ab}$, next solve for $\eta_{ab}$ given the updated $\mu_{jk}$, then solve for $\pi_k$ given the updated $\mu_{jk}$ and $\eta_{ab}$, and iterate until all three sets of parameters converge or until 128 iterations have run, whichever happens first.
+
+Even assuming every $\eta_{ab}$ is a constant, these equations are still too complex to solve for $\mu_{jk}$ analytically because $d_{abk}$ and $f_{abjk}$ also depend on $\mu_{jk}$ (as well as on other $\mu$ variables).
+Thus, every $\mu_{jk}$ is solved for numerically by rearranging each equation to
+\begin{equation}
+    \mu_{jk} \frac{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab} f_{abjk}}{\sum_{a=1}^{j}\sum_{b=j}^{J}\eta_{ab}d_{abk}} - m_{jk} = 0
+\end{equation}
+and applying the Newton-Krylov method~\cite{Knoll2004} implemented in SciPy~\cite{Virtanen2020}.
+This method requires an initial guess for $\mu_{jk}$; if that guess is similar to the eventual solution, the algorithm will run faster.
+When clustering with the EM algorithm (see ``\nameref{em-clustering}"), every iteration except the first uses the $\mu_{jk}$ from the previous iteration as the initial guess, since consecutive iterations tend to have similar parameters.
+In all other cases, the biased mutation rates ($m_{jk}$) are used, as they tend to be similar to $\mu_{jk}$ unless the mutation rates are large.
+If the Newton-Krylov method fails to converge within 1,000 iterations, then SEISMIC-RNA logs a warning and defaults to using the initial guess of the parameters.
+
+Once every $\mu_{jk}$ has been solved for, every $\eta_{ab}$ can be updated.
+Because $d_{abk}$ does not depend on $\eta_{ab}$ (except indirectly through the $\mu_{jk}$ parameters, which are now assumed to be constants), each equation can be rearranged to
+\begin{equation}
+    \eta_{ab} = \frac{e_{ab}}{d_{abk}} \sum_{a'=1}^{J} \sum_{b'=a'}^{J} \eta_{a'b'} d_{a'b'k}
+\end{equation}
+Leveraging that $\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} = 1$, by definition, leads to
+\begin{equation}
+    \sum_{a=1}^{J} \sum_{b=a}^{J} \frac{e_{ab}}{d_{abk}} \sum_{a'=1}^{J} \sum_{b'=a'}^{J} \eta_{a'b'} d_{a'b'k} = 1
+\end{equation}
+\begin{equation}
+    \sum_{a'=1}^{J} \sum_{b'=a'}^{J} \eta_{a'b'} d_{a'b'k} = \frac{1}{\sum_{a=1}^{J} \sum_{b=a}^{J} \frac{e_{ab}}{d_{abk}}}
+\end{equation}
+and finally a closed-form expression for each $\eta_{ab}$ given $\mu_{jk}$ (and hence $d_{abk}$) and $e_{abk}$:
+\begin{equation}
+    \eta_{ab} = \frac{\frac{e_{ab}}{d_{abk}}}{\sum_{a'=1}^{J} \sum_{b'=a'}^{J} \frac{e_{a'b'}}{d_{a'b'k}}}
+\end{equation}
+This equation should theoretically yield the same value of $\eta_{ab}$ for every $k$.
+In practice, the values will differ due to inexactness in floating-point arithmetic.
+Thus, the consensus value of $\eta_{ab}$ is taken to be the average $\eta_{ab}$ over every $k$, weighted by $\pi_k$:
+\begin{equation}
+    \eta_{ab} = \sum_{k=1}^{K} \pi_k \frac{\frac{e_{ab}}{d_{abk}}}{\sum_{a'=1}^{J} \sum_{b'=a'}^{J} \frac{e_{a'b'}}{d_{a'b'k}}}
+\end{equation}
+
+With updated values of $\mu_{jk}$ and $\eta_{ab}$, $\pi_k$ can also be solved.
+The above equations can be rearranged to
+\begin{equation}
+    \pi_k = p_k \frac{\sum_{k'=1}^{K} \pi_{k'} \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk'}}{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}
+\end{equation}
+Given that $\sum_{k=1}^{K} \pi_k = 1$, by definition:
+\begin{equation}
+    \sum_{k=1}^{K} p_k \frac{\sum_{k'=1}^{K} \pi_{k'} \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk'}}{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}} = 1
+\end{equation}
+\begin{equation}
+    \sum_{k'=1}^{K} \pi_{k'} \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk'} = \frac{1}{\sum_{k=1}^{K} \frac{p_k}{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}}
+\end{equation}
+which leads to a closed-form expression for each $\pi_k$ given $\mu_{jk}$ (and hence $d_{abk}$), $\eta_{ab}$, and $p_k$:
+\begin{equation}
+    \pi_k = \frac{\frac{p_k}{ \sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk}}}{\sum_{k'=1}^{K} \frac{p_{k'}}{\sum_{a=1}^{J} \sum_{b=a}^{J} \eta_{ab} d_{abk'}}}
+\end{equation}
+
+\subsubsection{Calculating the probability of observing each read}
+\label{calc-read-probability}
+
+The joint probability $L_{ik}$ that a random read would come from cluster $k$ and have specific 5'/3' ends ($E_{ab}$) and mutations ($M$) given that no two mutations are too close can be factored into three parts using the chain rule for probability:
+\begin{equation}
+    L_{ik} = P(E_{ab} M C_k | G_g) = \frac{P(E_{ab} M C_k G_g)}{P(G_g)} = P(M | E_{ab} C_k G_g) P(E_{ab} | C_k G_g) P(C_k | G_g)
+\end{equation}
+The first part -- the probability that a read would have the specific mutations $x_{ij}$ given that its 5'/3' end coordinates are $a$ and $b$ (respectively), it comes from cluster $k$, and no two mutations are too close -- is the product over every position $j$ from $a$ to $b$ of the probability of a mutation ($\mu_{jk}$) if read $i$ is mutated at position $j$ ($x_{ij} = 1$), otherwise ($x_{ij} = 0$) the probability of no mutation ($1 - \mu_{jk}$), normalized by the probability that no two mutations would be too close ($d_{abk}$):
+\begin{equation}
+    P(M | E_{ab} C_k G_g) = \frac{1}{d_{abk}} \prod_{j=a}^{b} \mu_{jk}^{x_{ij}} (1 - \mu_{jk})^{(1 - x_{ij})}
+\end{equation}
+The second part, $P(E_{ab} | C_k G_g) = e_{abk}$, can be calculated from the parameters $\mu_{jk}$, $\eta_{ab}$, and $\pi_k$, as explained in ``\nameref{calc_p_ends_noclose}".
+Likewise, the third part, $P(C_k | G_g) = p_k$, can also be calculated from the parameters, as explained in ``\nameref{calc_p_clust_noclose}".
+Combining all parts yields a formula for $L_{ik}$ in terms of the parameters $\mu_{jk}$, $\eta_{ab}$, and $\pi_k$ and of their derived values $d_{abk}$, $e_{abk}$, and $p_k$:
+\begin{equation}
+    L_{ik} = p_k \frac{e_{abk}}{d_{abk}} \prod_{j=a}^{b} \mu_{jk}^{x_{ij}} (1 - \mu_{jk})^{(1 - x_{ij})}
+\end{equation}
+
+Then, the marginal probability of observing read $i$ from any cluster can be expressed as the sum of the joint probabilty $L_{ik}$ over all clusters:
+\begin{equation}
+    L_i = P(E_{ab} M | G_g) = \sum_{k=1}^K P(E_{ab} M C_k | G_g) = \sum_{k=1}^K L_{ik}
+\end{equation}
+
+\subsubsection{Accelerating the bias correction algorithm by processing in chunks}
+
+The bias correction algorithm as described above scales with sequence length $J$ as roughly $O(J^2)$ in memory and $O(J^3)$ in time, becoming prohibitive for long sequences.
+However, an approximate solution can be derived in roughly $O(J)$ time.
+The approximation works on the basis that if there exists a stretch of at least $g$ consecutive positions with very low mutation rates, then the positions before this stretch will mutate essentially independently of the positions after it.
+Thus, a long sequence can be split into multiple chunks at every stretch of $g$ or more consecutive bases with very low mutation rates.
+Although the runtime for each chunk still scales as $O(J_{chunk}^3)$ with its length $J_{chunk}$, under the assumption that average chunk length does not depend on total sequence length, the total runtime for the sequence scales linearly with the number of chunks, which scales as linearly with the sequence length $J$, leading to overall scaling of $O(J)$.
+
+To split the sequence, the first position of and the position immediately after each consecutive stretch of $g$ or more positions below a user-specified threshold $\mu_t$ are identified.
+Then, the observed mutation rates ($m$) are split at those positions using the \verb|split| function from NumPy~\cite{Harris2020}, producing one chunk for each interval of $g$ or more low mutation rates and one chunk for each interval of higher mutation rates between them.
+For example, if the pattern of above (A) and below (B) $m_t$ were [A, B, A, B, B, B, B, A, A, B] and $g$ were 4, then the (0-indexed) split positions would be [3, 7] and the sequence would be split into 3 parts: [A, B, A], [B, B, B, B], and [A, A, B].
+
+The end coordinate probabilities ($\eta$) must also be split into chunks at the same positions as the mutation rates.
+For each chunk spanning positions $a$ to $b$, the probabilities ($\eta_{chunk}$) must be adjusted to include reads that extend beyond the ends of the chunk.
+That is, the first row of the matrix $\eta_{chunk}$ must represent the probability that a read's 5' end is at \textit{or before} the 5' end of the chunk.
+Thus, the first row of $\eta_{chunk}$ is calculated by summing rows 1 to $a$ of $\eta$:
+\begin{equation}
+    \eta_{chunk_{1j}} = \sum_{j'=1}^a{\eta_{j',(j+a-1)}}
+\end{equation}
+where $a$ and $b$ are the 5' and 3' ends of the chunk, respectively, and $j$ is between 1 and $b-a$ (inclusive).
+
+Likewise, the last column ($b-a+1$) is calculated by summing columns $b$ to $J$ of $\eta$:
+\begin{equation}
+    \eta_{chunk_{j,(b-a+1)}} = \sum_{j''=b}^J{\eta_{(j+a-1),j''}}
+\end{equation}
+where $a$ and $b$ are the 5' and 3' ends of the chunk, respectively, and $j$ is between 2 and $b-a+1$ (inclusive).
+
+The last element of the first row of $\eta_{chunk}$ represents the probability that a read spans the entire chunk:
+\begin{equation}
+    \eta_{chunk_{1,(b-a+1)}} = \sum_{j'=1}^a{\sum_{j''=b}^J{\eta_{j'j''}}}
+\end{equation}
+
+All other elements of $\eta_{chunk}$ (not in the first row or last column) are copied without adjustment from the original matrix $\eta$.
+
+The bias correction algorithm described above is performed on each chunk; and then the mutation rates from each chunk are reassembled.
+Bias correction with and without chunking yield very similar mutation rates for the default threshold of $m_t = 0.001$, but chunking can run orders of magnitude faster for long sequences.
+Additionally, because DMS-MaPseq data generally exclude G and U bases (the mutation rate is set to 0), and stretches of consecutive Gs/Us are common naturally, most RNA sequences can be divided into a large number of small chunks, providing a large speed-up.
+
+
+\subsection{Correcting bias due to extra mutations near modifications}
+\label{merge-correction-algorithm}
+
+Retroviral reverse transcriptases, such as the SuperScript~II used for SHAPE-MaP~\cite{Siegfried2014}, misincorporate nucleotides not only opposite a chemical adduct but also at the next several positions as they continue synthesizing cDNA.
+Because reverse transcription proceeds from the 3' to the 5' end of the RNA, these artifactual mutations appear immediately 5' of the modified position.
+This bias is the opposite of the one in DMS-MaPseq: rather than being underrepresented, reads with two mutations closer than $g$ bases are overrepresented, and the extra mutations do not mark modified -- and hence unpaired -- bases.
+Discarding such reads would therefore remove exactly the reads that carry a genuine modification.
+Instead, mutations closer than $g$ bases are merged into a single mutation at the 3'-most position, which is the position of the original modification.
+A similar correction for the same kind of bias is also implemented in ShapeMapper~2~\cite{Busan2018} as \verb|--min-mutation-separation| and in RNA Framework~\cite{Incarnato2018} as \verb|--collapse-consecutive/-cc|.
+
+\subsubsection{Merging mutations that are too close}
+\label{merge-close-muts}
+
+Within each read, mutations are merged by scanning the positions from 3' to 5' and keeping track of the most recent position at which a modification was retained:
+\begin{enumerate}
+    \item Initialize the position of the most recently retained modification to 0 (meaning that none has been retained yet).
+    \item For each position $j$ that is mutated in the read, in order from 3' to 5':
+    \begin{enumerate}
+        \item If no modification has been retained yet, or if the most recently retained modification lies more than $g$ positions 3' of $j$, then retain the mutation at $j$ as a genuine modification and set the most recently retained position to $j$.
+        \item Otherwise, discard the mutation at $j$ as an artifact of the reverse transcriptase, and leave the most recently retained position unchanged.
+    \end{enumerate}
+\end{enumerate}
+Because only the 3'-most mutation of each group is retained, no two retained mutations are closer than $g$ bases, exactly as in the reads that remain after dropping.
+Unlike dropping, however, merging discards no reads: every read is retained, with a possibly reduced set of mutations.
+
+\subsubsection{Deriving mutation rates of reads with mutations merged}
+\label{calc-p-mut-merged}
+
+Because no reads are discarded, merging does not distort the distribution of reads over clusters or over 5'/3' end coordinates.
+Consequently, the observable cluster proportions equal the total cluster proportions ($p_k = \pi_k$) and the observable end coordinate proportions equal the total end coordinate proportions ($e_{abk} = \eta_{ab}$), so neither requires correction.
+Only the mutation rates are biased, because a mutation at a position is observed after merging only if it is not absorbed into a mutation at a nearby position on its 3' side.
+
+Let $\tilde{\mu}_{jbk}$ be the probability that a read from cluster $k$ whose 3' end is at coordinate $b$ has a mutation at position $j$ after merging.
+A mutation at position $j$ survives merging if and only if none of the $g$ positions 3' of $j$ retains a mutation after merging.
+This condition depends only on positions 3' of $j$, and hence on the 3' coordinate $b$ but not on the 5' coordinate $a$, so a single recurrence per 3' coordinate suffices:
+\begin{equation}
+    \tilde{\mu}_{jbk} = \mu_{jk}\left(1 - \sum_{j'=j+1}^{\min(j+g, b)}{\tilde{\mu}_{j'bk}}\right)
+\end{equation}
+The base case is $\tilde{\mu}_{bbk} = \mu_{bk}$, since position $b$ is the 3'-most position of the read and thus has no positions 3' of it into which its mutation could be merged.
+Evaluating the recurrence from $j = b$ down to $j = 1$, while maintaining a running sum over the $g$ positions in the window, requires $O(J)$ time for each 3' coordinate rather than $O(gJ)$.
+
+The observable mutation rate $m_{jk}$ is then the average of $\tilde{\mu}_{jbk}$ over every read that contains position $j$, weighted by the proportions $\eta_{ab}$:
+\begin{equation}
+    m_{jk} = \frac{\sum_{b=j}^{J}{\tilde{\mu}_{jbk} \sum_{a=1}^{j}{\eta_{ab}}}}{\sum_{b=j}^{J}\sum_{a=1}^{j}{\eta_{ab}}}
+\end{equation}
+If no read contains position $j$, then $m_{jk}$ is defined to be 0.
+
+As in the case of dropping reads, this equation cannot be solved for $\mu_{jk}$ analytically because $\tilde{\mu}_{jbk}$ depends on $\mu_{jk}$ and on the mutation rates of the $g$ positions 3' of it.
+Every $\mu_{jk}$ is therefore solved for numerically using the Newton-Krylov method~\cite{Knoll2004} implemented in SciPy~\cite{Virtanen2020}, in the same manner as described in ``\nameref{calc_params}", except that only $\mu_{jk}$ must be solved for, since $\eta_{ab}$ and $\pi_k$ are already known.
+Each iterate is clipped to $[0, 1]$ before the recurrence is evaluated, because outside that interval the errors in the recurrence grow multiplicatively from the 3' to the 5' end and can prevent the solver from converging.
+
+\subsubsection{Calculating the probability of observing each read after merging}
+\label{calc-read-probability-merged}
+
+The joint probability $L_{ik}$ that a read would come from cluster $k$ and have the 5'/3' end coordinates $a$ and $b$ and the mutations observed in read $i$ can be factored as in ``\nameref{calc-read-probability}", but with two differences.
+First, because no reads are discarded, the cluster and end coordinate proportions are simply $\pi_k$ and $\eta_{ab}$, and no normalization by $d_{abk}$ is needed.
+Second, a read observed to have a mutation at position $j$ is consistent with every pre-merge read in which any subset of the $g$ positions immediately 5' of $j$ was also mutated, because all such mutations would have been absorbed into the mutation at $j$.
+Those positions therefore provide no information about the read, so the probability that they are not mutated must be divided out:
+\begin{equation}
+    L_{ik} = \pi_k \eta_{ab} \left(\prod_{j=a}^{b}{\mu_{jk}^{x_{ij}}(1 - \mu_{jk})^{(1 - x_{ij})}}\right) \left(\prod_{\substack{j=a \\ x_{ij}=1}}^{b}{\;\prod_{j'=\max(j-g,\,a)}^{j-1}{(1 - \mu_{j'k})^{-1}}}\right)
+\end{equation}
+The marginal probability of observing read $i$ is the sum of $L_{ik}$ over all clusters, as in ``\nameref{calc-read-probability}".
+These probabilities are used for the Expectation step of the EM algorithm (see ``\nameref{expectation-step}") and for the jackpotting calculation (see ``\nameref{calc-jackpotting-quotient}"), both of which support merging as well as dropping.
+
+\subsubsection{Simulating reads with extra mutations near modifications}
+
+To simulate data from a retroviral reverse transcriptase, SEISMIC-RNA can inject artifactual mutations 5' of each simulated modification using the option \verb|--injected-mut-probs|, which takes a comma-separated list of offsets and probabilities.
+By default, with \verb|--probe SHAPE| or \verb|--probe ETC|, a mutation is injected one position 5' of a modification with probability 0.1 and two positions 5' with probability 0.01.
+Injecting mutations is the inverse of merging them, so simulated data can be used to verify that the correction recovers the true mutation rates.
+
+
+\subsection{Calculating the jackpotting quotient}
+\label{calc-jackpotting-quotient}
+
+The jackpotting quotient (JQ) measures how much the read counts deviate from their expected values relative to how much they would be expected to deviate if there were no jackpotting.
+Thus, calculating the jackpotting quotient involves first calculating the deviation from expected values (called the ``jackpotting score") for the real dataset.
+But even without jackpotting, if all positions mutated independently (except those separated by fewer than $g$ bases), read counts would deviate somewhat from the expected values due to the stochasticity of simulation and the finite number of reads.
+To determine the expected deviation, several null models are produced by simulating reads with independent mutations, calculating the jackpotting scores for all null models, and averaging them.
+Finally, the jackpotting quotient (JQ) is defined as the quotient of $e$ raised to the real and null jackpotting scores (JS):
+\begin{equation}
+    JQ = \frac{\exp{({JS}_{real})}}{\exp{({JS}_{null})}} = \exp{({JS}_{real} - {JS}_{null})}
+\end{equation}
+
+\subsubsection{Calculating the jackpotting score}
+\label{calc-jackpotting-score}
+
+The jackpotting score (JS) measures how much the observed read counts deviate from expectations.
+Because the read counts under the null model (i.e. with independent mutations, except for those separated by less than $g$ bases) follow a multinomial distribution, JS is adapted from the G-test statistic ($G^2$)~\cite{Read1988}
+\begin{equation}
+    G^2 = 2\sum_{i=1}^N{O_i\log{\frac{O_i}{E_i}}}
+\end{equation}
+by dropping the coefficient of 2 and dividing by the number of reads $N$:
+\begin{equation}
+    JS = \frac{1}{N}\sum_{i=1}^N{O_i\log{\frac{O_i}{E_i}}}
+\end{equation}
+where $O_i$ and $E_i$ are the observed and expected counts of read $i$, respectively.
+Thus, the jackpotting score equals the average log-fold overrepresentation of a read.
+
+\subsubsection{Calculating the expected count of each read}
+\label{calc-expected-count}
+
+For read $i$, the expected count $E_i$ equals the marginal probability of observing read $i$, which is $L_i$ (for details, see ``\nameref{calc-read-probability}") times the total number of reads $N$:
+\begin{equation}
+    E_i = NL_i
+\end{equation}
+
+\subsubsection{Rounding stochastically to integers}
+\label{stochastic-round}
+
+Simulating integer numbers of reads or mutations with real number expected values, while keeping the number simulated as close as possible to the original, requires rounding the expected values to the integer above or below.
+Rounding is performed stochastically, such that the probability of rounding up equals the fractional part of the number (e.g. 5.4 would be rounded up 40\% of the time and down 60\% of the time).
+
+When there are multiple expected values that represent proportions, the sum after rounding to integers must equal the sum before rounding.
+(If the sum before rounding is not an integer, then the sum after rounding should be rounded up or down proportional to the fractional part, as described above.)
+To round all the values while preserving their sum, each is represented as a line segment whose length equals the value.
+The line segments are shuffled randomly (so that they get rounded up/down independently) and laid out end-to-end on the real number line, with the first segment starting at a random number drawn from the standard uniform distribution (to eliminate bias against the first shuffled value).
+Then for each line segment, the number of integers on the real number line that it overlaps is counted, which rounds the length of the line segment up (with probability equal to the fractional part of the line segment's width) or down.
+Moreover, since the line segments are arranged end-to-end, the total number of integers they overlap must be either the integer immediately less than or greater than the sum of their lengths, which preserves the sum after rounding.
+Finally, the rounded values are un-shuffled into their original order.
+
+\subsubsection{Simulating a null jackpotting score}
+\label{sim-null-jackpotting-score}
+
+The purpose of the null model is to determine the expected jackpotting score when there is no jackpotting.
+(Note that it is not 0 because reads randomly generated without jackpotting will not exactly match the expected counts -- just as a statistic of any finite random sample will not exactly match the parameter of the population.)
+It works by simulating the same number of reads ($N$) from the same number of clusters ($K$) with the same 5' and 3' end coordinates (and hence read coverage), number of mutations per position, and number of reads in each cluster (rounded up or down to the nearest integer) as in the original data.
+First, the parameters $\mu_{jk}$, $\eta_{ab}$, and $\pi_k$ are used to calculate the biased mutation rates ($m_{jk}$), 5' and 3' end proportions ($e_{abk}$), and cluster proportions ($p_k$) among reads with no mutations separated by fewer than $g$ bases, as described in ``\nameref{bias-correction-algorithm}".
+
+To simulate reads with the same 5' and 3' ends as in the real reads, each pair of 5' and 3' ends is assigned probabilistically to a cluster.
+To do so, the probability that a read with 5' and 3' ends $a$ and $b$, respectively, came from cluster $k$ is calculated:
+\begin{equation}
+    P(C_k | G_g E_{ab}) = P(E_{ab} | G_g C_k) \frac{P(C_k | G_g)}{P(E_{ab} | G_g)} = e_{abk}\frac{p_k}{\sum_{k'=1}^K{e_{abk'}p_{k'}}}
+\end{equation}
+Then the number of reads in each cluster $k$ is calculated as $N_k = Np_k$ and rounded to an integer stochastically while preserving $\sum_{k=1}^{K}N_k = N$ (see ``\nameref{stochastic-round}").
+In a randomized order, each pair of 5' and 3' ends is assigned to a cluster:
+\begin{enumerate}
+    \item Calculate the probability of assigning pair $i$ of 5' and 3' ends $a$ and $b$ to each cluster $k$ given the number of reads $N_k$ remaining to be assigned: $\frac{N_k P(C_k | G_g E_{ab})}{\sum_{k'=1}^K{N_{k'} P(C_{k'} | G_g E_{ab})}}$
+    \item Use those probabilities to select a cluster randomly.
+    \item Decrement $N_k$ for the cluster $k$ that was selected.
+    \item Increment $i$ (move to the next pair of 5' and 3' ends) and repeat from step 1.
+\end{enumerate}
+
+After each pair of 5' and 3' ends has been assigned to a cluster, reads with those end coordinates are simulated for each cluster.
+For each cluster $k$, the read coverage $N_{jk}$ at each position $j$ is calculated from the 5' and 3' coordinates ($a_i$ and $b_i$, respectively) of every read $i$ that was assigned to the cluster:
+\begin{equation}
+    N_{jk} = \sum_{i=1}^N{a_i \le j \le b_i}
+\end{equation}
+The number of mutations $M_{jk}$ at each position $j$ is calculated as $M_{jk} = m_{jk} N_{jk}$ and stochastically rounded up or down (for details, see ``\nameref{stochastic-round}").
+Then, the positions are sorted from fewest to most non-mutated bases (i.e. $N_{jk} - M_{jk}$) so that positions that are constrained by having few options for non-mutated bases are filled early.
+The reads that are mutated at each position $j$ are selected as follows:
+\begin{enumerate}
+    \item To ensure that in the simulated reads, all mutations are separated at least $g$ bases, all reads with a mutation within $g$ positions of $j$ are listed.
+    \item The reads that are eligible to be mutated at position $j$ are determined by finding those that cover position $j$ (i.e. $a_i \le j \le b_i$) and excluding those that have another mutation within $g$ positions of $j$.
+    \item Of those reads, $M_{jk}$ are chosen randomly to be mutated.
+    \item Finally, $j$ is advanced to the next position, and the process is repeated from step 1.
+\end{enumerate}
+
+Finally, the unique simulated reads are counted (the null observed counts, $O_i$), and the null expected counts ($E_i$) are calculated as described in ``\nameref{calc-expected-count}".
+The jackpotting score of the null model is calculated using the null $O_i$ and $E_i$ as described in ``\nameref{calc-jackpotting-score}".
+Because the null simulation is memory-intensive, it is only run if the total size of the simulated data (total number of reads times length of the region) does not exceed \verb|--jackpot-max-data| (default $2^{28} = 268,435,456$).
+
+\subsubsection{Bootstrapping a distribution for the jackpotting quotient}
+
+Because the null jackpotting score is stochastic, it will vary among simulations.
+To ensure that the null jackpotting score is reproducible, the simulation is repeated until it converges or until the number of simulations exceeds \verb|--max-jackpot-sims| (default 12), as follows:
+\begin{enumerate}
+    \item Initialize an empty list of null jackpotting scores.
+    \item Simulate a null jackpotting score as described in ``\nameref{sim-null-jackpotting-score}" and append it to the list.
+    \item If length of the list ($n$) is at least 2, then calculate a user-specified confidence interval (default 95\%) for the mean of the list using Student's $t$ distribution with $n - 1$ degrees of freedom.
+    \item Use the confidence interval of jackpotting scores to calculate the confidence interval of jackpotting quotients as described in ``\nameref{calc-jackpotting-quotient}".
+    \item If the confidence interval of jackpotting quotients contains the user-specified maximum allowable jackpotting quotient, then it is still ambiguous whether or not the reads are too jackpotted: repeat from step 2. Otherwise, return a consensus jackpotting quotient based on the median null jackpotting score.
+\end{enumerate}
+
+
+\subsection{Calculating the arcsine distance between two sets of mutation rates}
+\label{calc-arcsine-distance}
+
+The difference between two mutation rates ($\mu_1$ and $\mu_2$) is calculated using the arcsine distance (ARCD):
+\begin{equation}
+    ARCD(\mu_1, \mu_2) = \frac{|\arcsin{(2\mu_1 - 1)} - \arcsin{(2\mu_2 - 1)}|}{\pi}
+\end{equation}
+The difference between two sets of mutation rates ($\mu_{jk_1}$ and $\mu_{jk_2}$) from position $j = a$ to $j = b$ is calculated using the mean arcsine distance (MARCD):
+\begin{equation}
+    MARCD = \frac{1}{b - a + 1}\sum_{j=a}^b{ARCD(\mu_{jk_1}, \mu_{jk_2})}
+\end{equation}
+Arcsine distance is a middle ground between absolute difference, $|\mu_1 - \mu_2|$, which is robust to noise in small but not large mutation rates; and absolute log-fold-change, $|\log{(\frac{\mu_1}{\mu_2})}|$, which is robust to noise in large but not small mutation rates (and undefined if either mutation rate is 0). Arcsine distance is always in $[0, 1]$, is defined for any $\mu_1, \mu_2 \in [0, 1]^2$, and -- for the same absolute difference -- is larger when the mutation rates are low (e.g. 0.01 vs. 0.02) than when they are high (e.g. 0.21 vs. 0.22).
+
+
+\subsection{Clustering reads with the Expectation-Maximization (EM) algorithm}
+\label{em-clustering}
+
+Let $N$ reads from $K$ clusters align to a reference sequence of length $J$.
+Let the proportion of reads whose 5' and 3' ends align, respectively, to coordinates $a$ and $b$ ($1 \le a \le b \le J$) be $\eta_{ab}$ (assuming these proportions are equal for all clusters).
+Let the mutation rate of base $j$ ($1 \le j \le J$) in cluster $k$ ($1 \le k \le K$) be $\mu_{jk}$.
+Let the proportion of cluster $k$ in the ensemble be $\pi_k$.
+
+\subsubsection{Maximization step}
+\label{maximization-step}
+
+The maximization step updates the parameters ($\mu_{jk}$, $\eta_{ab}$, and $\pi_k$) using the current cluster memberships ($z_{ik}$).
+The observed estimates of the parameters $m_{jk}$, $e_{ab}$, and $p_k$ are first computed; then, the underlying parameters $\mu_{jk}$, $\eta_{ab}$, and $\pi_k$ are solved for as described in ``\nameref{calc_params}".
+
+\subsubsection{Expectation step}
+\label{expectation-step}
+
+The expectation step updates the cluster memberships ($z_{ik}$) and the likelihood function ($L$) using the current parameters ($\mu_{jk}$, $\eta_{ab}$, and $\pi_k$).
+Both can be expressed in terms of the joint ($L_{ik}$) and marginal ($L_i$) probabilities of observing read $i$ (for details, see ``\nameref{calc-read-probability}").
+
+Cluster membership ($z_{ik}$) is defined as the probability that read $i$ came from cluster $k$ given its 5'/3' end coordinates ($E_{ab}$) and mutations ($M$) and given that no two mutations are too close ($G_g$):
+\begin{equation}
+    z_{ik} = P(C_k | E_{ab} M G_g) = \frac{P(E_{ab} M C_k G_g)}{P(E_{ab} M G_g)} = \frac{P(E_{ab} M C_k | G_g)}{P(E_{ab} M | G_g)} = \frac{L_{ik}}{L_i}
+\end{equation}
+
+The likelihood of the model ($L$) is the product of the marginal probabilities ($L_i$) of observing all the reads:
+\begin{equation}
+    L(\mu, \eta, \pi) = \prod_{i=1}^{N} L_i = \prod_{i=1}^{N} \sum_{k=1}^{K} p_k \frac{e_{abk}}{d_{abk}} \prod_{j=a}^{b} \mu_{jk}^{x_{ij}} (1 - \mu_{jk})^{(1 - x_{ij})}
+\end{equation}
+
+\subsubsection{The EM algorithm}
+\label{em-algorithm}
+
+Each time the EM algorithm runs, it does the following:
+\begin{enumerate}
+    \item Generate $K$ concentration parameters by pulling $K$ random samples from a standard uniform distribution.
+    \item Initialize the cluster memberships $z_{ik}$ by pulling $i$ random samples from a Dirichlet distribution with the $K$ concentration parameters.
+    \item Initialize the iteration count to 1.
+    \item Repeat until convergence or the iteration count exceeds the user-specified maximum limit:
+    \begin{enumerate}
+        \item Run the Maximization step to update $\mu_{jk}$, $\eta_{ab}$, and $\pi_k$.
+        \item Run the Expectation step to update $z_{ik}$ and the likelihood $L$.
+        \item Break the loop if the solution has converged, which happens if both are true:
+        \begin{itemize}
+            \item The current minus the previous $\log{L}$ is less than a user-specified small positive threshold.
+            \item The iteration count is at least the user-specified minimum limit.
+        \end{itemize}
+        \item Increment the iteration count.
+    \end{enumerate}
+    \item Calculate the Bayesian information criterion~\cite{Schwarz1978} (BIC): $BIC = P\log{N} - 2\log{L}$, where $P$ (the number of parameters) is calculated by summing the number of mutation rates in all clusters ($K$ times the number of non-masked positions from 1 to $J$), the degrees of freedom of the cluster proportions ($K - 1$), and the degrees of freedom of the end coordinate proportions (one less than the number of non-zero elements in the matrix $\eta_{ab}$, where $1 \le a \le b \le J$).
+    \item Check if the result passed all filters:
+    \begin{description}
+        \item[All clusters are distinct:] The maximum Pearson correlation between any two clusters is less than a user-specified maximum OR the minimum mean arcsine distance (see ``\nameref{calc-arcsine-distance}") between any two clusters is greater than a user-specified minimum.
+        \item[No cluster appears to be an artifact:] The maximum arcsine distance (see ``\nameref{calc-arcsine-distance}") among all positions between the ensemble average and any cluster is less than a user-specified maximum OR the maximum Gini coefficient~\cite{Rouskin2014} of any cluster is less than a user-specified maximum.
+        \item[The run is not jackpotted:] The jackpotting quotient (see ``\nameref{calc-jackpotting-quotient}") is less than a user-specified maximum.
+    \end{description}
+\end{enumerate}
+
+\subsubsection{Determining the optimal number of clusters using EM}
+\label{em-optimal-k}
+
+The EM algorithm is first run once using $K = 1$ to determine the BIC of the ensemble average.
+Then, the following algorithm finds the optimal $K$:
+\begin{enumerate}
+    \item Increase $K$ by 1.
+    \item Using the new $K$, run EM a user-specified minimum number of times (default 6), initializing each run's cluster memberships ($z_{ik}$) randomly.
+    \item Sort all EM runs from highest (best) to lowest (worst) likelihood ($L$).
+    \item Check if all of the following conditions are true (to verify that the EM results are reproducible):
+    \begin{itemize}
+        \item At least two EM runs passed all filters described in ``\nameref{em-algorithm}".
+        \item The maximum Pearson correlation between the best run and any other that passed filters is at least a user-specified minimum.
+        \item The minimum mean arcsine distance (see ``\nameref{calc-arcsine-distance}") between the best run and any other that passed filters is at most a user-specified maximum.
+        \item The difference in log-likelihood between the best and second-best runs that passed filters is no more than a user-specified maximum.
+    \end{itemize}
+    \item If any conditions were false, then run EM again repeatedly up to a user-specified maximum number of times (default 30). After each additional EM run, repeat steps 3 and 4.
+    \item Once all conditions have passed or EM has been run the maximum number of times, determine whether the current $K$ is the best encountered so far:
+    \begin{enumerate}
+        \item For every $K$ that has already been tried, check if all the conditions in step 4 pass. For the current $K$ only, do not require EM runs to pass the jackpotting filter: if the current $K$ is too low, then multiple clusters would still be mixed together, which resembles jackpotting, so failing the jackpotting filter should not preclude trying a larger $K$.
+        \item For every $K$ that passed all the conditions, find the best (smallest) BIC among all EM runs that passed filters.
+        \item Consider the current $K$ to be the best so far if its best run has a smallest BIC than all other values of $K$.
+    \end{enumerate}
+    \item If the current $K$ is the best so far or the user has requested trying all values of $K$, and the user has not specified a maximum $K$ or the current $K$ is less than the user-specified maximum, then return to step 1 and repeat. Otherwise, stop and use the $K$ that gave the smallest BIC as the optimal number of clusters.
+\end{enumerate}
+
+
+\subsection{Scanning long transcripts for domains that form multiple structures}
+\label{filterscan-clusterscan}
+
+Transcripts that are much longer than the reads can be clustered by first finding domains in which many pairs of positions are significantly anti-correlated.
+By definition, positions more than $2g$ bases apart within a cluster do not correlate, where $g$ is the minimum gap between mutations (and is multiplied by 2 to account for edge effects), so a high density of anti-correlated pairs of positions within a region suggests it forms multiple clusters.
+
+\subsubsection{Dividing the reference sequence into tiles}
+
+The time and memory required to find anti-correlated pairs of positions scales as $O(J^2)$ where $J$ is the length of the transcript (or a region thereof).
+Thus, very long transcripts could require prohibitive amounts of computational resources.
+To speed up the calculation, the transcript is divided into short, overlapping tiles, and correlations are calculated within each tile.
+By default, the tile length ($J_T$) is 2 times the median read length, and the minimum overlap fraction ($O_T$) for adjacent tiles is 0.5.
+The defaults ensure that nearly all pairs of positions that are both covered by a read -- and hence could correlate -- appear together in at least one tile, while also keeping the tile size reasonably small -- less than 600~nt for 150x150~nt paired-end reads.
+
+The required number of tiles ($N_T$) is calculated as
+\begin{equation}
+    N_T = 1 + \lceil \frac{J - J_T}{\lfloor J_T (1 - O_T) \rfloor} \rceil
+\end{equation}
+where $1 \le J_T \le J$ and $0 \le O_T < 1$; $\lfloor J_T (1 - O_T) \rfloor$ is the maximum permitted offset for adjacent tiles; and $J - J_T$ is the number of positions remaining after the first tile.
+The 5' ends of the $N_T$ tiles are then spaced evenly from the first position in the transcript/region ($J_1$) to one tile length before the last position ($J_1 + J - J_T$) using the \verb|linspace| function of NumPy~\cite{Harris2020} rounded to the nearest integer.
+Then each 3' end is calculated as the corresponding 5' end plus $J_T - 1$.
+Finally, the 5' and 3' ends of the tiles are automatically fed into the Filter step (see ``\nameref{seismic-filter}" in the \nameref{methods}) to generate the data for each tile.
+
+\subsubsection{Finding bridge pairs}
+\label{finding-bridge-pairs}
+
+After the Filter step has completed, the data for each tile are processed to calculate confusion matrices.
+For each pair of positions $a$ and $b$ in the tile for which $2g < b - a \le W$, where $g$ is the minimum gap between mutations (option \verb|--min-mut-gap|) and $W$ is the band width (option \verb|--band-width|, default no limit other than the tile length), four quantities are calculated:
+\begin{description}
+    \item[N] Number of reads that cover both positions $a$ and $b$.
+    \item[A] Number of reads that have a mutation at position $a$ and cover position $b$.
+    \item[B] Number of reads that cover position $a$ and have a mutation at position $b$.
+    \item[X] Number of reads that have a mutation at both positions $a$ and $b$.
+\end{description}
+Positions separated by fewer than $2g$ positions are not analyzed because they can show correlations due to the dropout bias rather than alternative structures.
+Positions separated by more than $W$ positions are also not analyzed because they are unlikely to have sufficient coverage, and bounding the analysis to $W$ makes the algorithm scale roughly linearly instead of quadratically with sequence length.
+The pairs from all tiles are then merged into a single table.
+If a pair occurs in more than one tile, the counts ($N$, $A$, $B$, $X$) from the tile in which its joint coverage $N$ is greatest are used, since that is the highest-powered observation and avoids counting the same reads twice under two different tilings.
+
+Under the null hypothesis that those positions mutate independently, the expected number of reads in which both $a$ and $b$ are mutated is $X_0 = \frac{AB}{N}$.
+The algorithm then defines ``eligible pairs" -- ones with sufficient coverage to be eligible to have their correlations calculated -- as those for which $N \ge N_{min}$ (where $N_{min}$ is \verb|--min-pair-coverage|, default 1,000) and $X_0 \ge X_{min}$ (where $X_{min}$ is \verb|--min-expect-both|, default 5.0).
+
+For each eligible pair, it calculates the fold-change of the observed vs. expected counts ($\frac{X}{X_0}$) and the $P$-value that the positions are anti-correlated.
+The $P$-value is calculated as the lower tail of a one-sided Fisher exact test implemented with the hypergeometric distribution in SciPy~\cite{Virtanen2020}: \verb|P = hypergeom.cdf(X, N, B, A)|.
+To account for multiple comparisons, adjusted $P$-values ($P_{adj}$) are calculated using the Benjamini-Hochberg method~\cite{Benjamini1995} with a user-specified false discovery rate $\alpha$ (\verb|--pair-fdr|, default 0.05).
+The algorithm then defines ``bridge pairs" as eligible pairs for which $P_{adj} \le \alpha$ and the fold change $\frac{X}{X_0} \le \frac{1}{F_{min}}$, where $F_{min}$ is the minimum fold change (\verb|--min-fold-change|, default 2.0).
+
+\subsubsection{Assembling domains from bridge pairs}
+
+Domains are assembled by segmenting the scanned region into background and domain blocks, then refining the boundaries of the resulting domains.
+Let a \textit{block} be any interval of consecutive positions $[s, e]$ within the scanned region; let $n_e$ be the number of eligible pairs contained entirely within the block (i.e. pairs $(a, b)$ for which $s \le a < b \le e$) and $n_b$ the number of those pairs that are bridges (for details, see ``\nameref{finding-bridge-pairs}").
+Let $\lambda_0$ be the \textit{null bridge rate}: the proportion of eligible pairs that would be bridges in a region containing no domain.
+
+Every block is scored by its own locally fitted binomial log-likelihood ratio against $\lambda_0$, penalized for the one parameter it fits:
+\begin{equation}
+    \hat{\lambda} = \min{\left(\max{\left(\frac{n_b}{n_e}, \lambda_0\right)}, 1 - \epsilon\right)}
+\end{equation}
+\begin{equation}
+    \Lambda(n_e, n_b) = n_b\log{\frac{\hat{\lambda}}{\lambda_0}} + (n_e - n_b)\log{\frac{1 - \hat{\lambda}}{1 - \lambda_0}} - \frac{\log{n_e}}{2}
+\end{equation}
+where $\epsilon = 10^{-9}$.
+Because every block fits its bridge rate from only its own pairs, a bridge-dense domain elsewhere in the region cannot inflate the score of an unrelated block.
+Clamping $\hat{\lambda}$ to at least $\lambda_0$ rewards only enrichment above the null rate: a block at or below that rate fits $\hat{\lambda} = \lambda_0$, giving a log-likelihood ratio of 0 and hence a negative score.
+Since the maximum likelihood estimate $\hat{\lambda}$ always fits at least as well as $\lambda_0$, a small subset of pairs with an above-average number of bridges by chance alone would otherwise score positively; subtracting the Bayesian information criterion~\cite{Schwarz1978} penalty of $\frac{1}{2}\log{n_e}$ for the one fitted parameter makes a truly null block score negative for any $n_e > 1$, so extending a block into bridge-free space always costs.
+
+Every block is also assigned the exact probability that at least $n_b$ of its $n_e$ eligible pairs would be bridges if each were independently a bridge with probability $\lambda_0$:
+\begin{equation}
+    P(n_e, n_b) = \sum_{x = n_b}^{n_e}{\binom{n_e}{x}\lambda_0^{x}(1 - \lambda_0)^{n_e - x}}
+\end{equation}
+A block must pass both criteria to be admitted.
+The score $\Lambda$ enforces a minimum effect size, while the $P$-value guards against a small block that scores positively by chance but would not survive correction for multiple comparisons over every block considered.
+
+Let $L$ be the maximum domain length (by default, twice the median read length), $\alpha_P$ the false discovery rate for calling a pair a bridge (default 0.05), $\alpha_D$ that for calling a block a domain (default 0.05), and $\alpha_M$ that for merging and extending domains (default 0.05).
+The domains are then assembled as follows:
+\begin{enumerate}
+    \item Seed the null bridge rate as $\lambda_0 = \alpha_P r$, where $r$ is the proportion of all eligible pairs that are bridges, since $\alpha_P r$ is the rate of false bridges guaranteed by the false discovery rate.
+    Floor $\lambda_0$ at $\epsilon$ so that a region with no bridges at all does not yield $\lambda_0 = 0$.
+    \item Segment the region into domains using the current $\lambda_0$:
+    \begin{enumerate}
+        \item Calculate the $P$-value cutoff for admitting a block.
+        List every candidate block $[s, e]$ that the next step could consider -- that is, every block of length at most $L$ containing at least one eligible pair -- and calculate $P(n_e, n_b)$ for each.
+        Adjust these $P$-values using the Benjamini-Hochberg method~\cite{Benjamini1995} with the false discovery rate $\alpha_D$.
+        The cutoff $P_D$ is the largest raw $P$-value whose adjusted value is at most $\alpha_D$; if no $P$-value qualifies, then admit no blocks.
+        \item Partition the region into background and domain blocks by exact dynamic programming.
+        Let $D_t$ be the largest total score obtainable using positions 1 through $t$, with $D_0 = 0$.
+        Call a block $[s, t]$ \textit{admissible} if it contains at least one eligible pair, its length is at most $L$, its score is $\Lambda(n_e, n_b) \ge 0$, and its $P$-value is $P(n_e, n_b) \le P_D$.
+        Then
+        \begin{equation}
+            D_t = \max{\left(D_{t - 1}, \max_{s}{\left(D_{s - 1} + \Lambda(n_e, n_b)\right)}\right)}
+        \end{equation}
+        where $s$ ranges over the starts of all admissible blocks ending at $t$.
+        Bounding those starts to $s \ge t - L + 1$ enforces the maximum domain length and reduces the time from $O(J^2)$ to $O(JL)$ with respect to the length $J$ of the region.
+        Backtrack from $D_J$ to recover the chosen blocks.
+        Note that the scores of the chosen blocks are summed without any further per-block penalty: gating each block against its own admission criteria, rather than charging a fee per block, means that choosing more blocks is never penalized, so two adjacent domains that each score highly can never be cheaper to merge than to keep separate.
+        \item Merge adjacent blocks that remain directly connected across the gap between them.
+        For each \textit{cut} -- the boundary between positions $m$ and $m + 1$ -- count the eligible pairs that straddle it (i.e. pairs $(a, b)$ for which $a \le m < b$) and how many of them are bridges.
+        A cut is \textit{connected} if these crossing pairs meet the same two criteria used to admit a block: a score of $\Lambda(n_e, n_b) \ge 0$ and a $P$-value that survives the Benjamini-Hochberg correction~\cite{Benjamini1995} over every cut in the region with the false discovery rate $\alpha_M$.
+        Sweeping from 5' to 3', merge two adjacent blocks if every cut in the gap between them is connected and the merged block would be no longer than $L$.
+        Because a block is scored using only the pairs it contains, it cannot see a pair reaching from inside one block into another; this step recovers a domain that a genuine internal gap in correlations (such as an unpaired internal loop within a helix) would otherwise split.
+        \item Extend each domain outward to absorb bridges that reach into it from just beyond its edge.
+        Because a bridge links two anti-correlated positions, if one of its endpoints lies within a domain, then the other endpoint belongs to the same structural module; but extending the domain over the sparse space between them would dilute its mean bridge rate, so the previous steps exclude such positions.
+        For the 5' edge of a domain $[s, e]$, consider every position $p < s$ that is the outer endpoint of a bridge $(p, b)$ with $s \le b \le e$.
+        Taking these positions from farthest to nearest, extend the domain to the first position $p$ for which the bridges spanning the entire candidate extension -- that is, all pairs from $[p, s)$ into $[s, e]$ -- collectively satisfy $\Lambda(n_e, n_b) \ge 0$ and $P(n_e, n_b) < \alpha_M$.
+        Extend the 3' edge symmetrically.
+        Never extend a domain into a neighboring domain or beyond a length of $L$.
+        Repeat until no domain changes.
+        Testing all crossing bridges collectively, rather than each cut separately, is essential because the crossing pairs at any one cut are too few to be significant on their own, while the whole set of them is unambiguously significant; and extending to the farthest \textit{significant} endpoint, rather than simply the farthest endpoint, ignores a lone distant bridge, whose aggregate of one pair is not significant.
+    \end{enumerate}
+    \item Re-estimate the null bridge rate as the proportion of bridges among the eligible pairs that lie outside every preliminary domain from step 2 (a pair $(a, b)$ lies inside a domain $[s, e]$ if $s \le a$ and $b \le e$), and floor it at the value seeded in step 1.
+    Because no domain was found there, those bridges are false positives, so their rate is the background rate that a real domain must exceed.
+    Excluding the domains prevents a bridge-dense domain from inflating the estimate.
+    \item Repeat step 2 using the re-estimated $\lambda_0$.
+    The resulting blocks are the domains.
+\end{enumerate}
+
+Finally, the domains are filtered and, optionally, adjusted to cover the gaps between them:
+\begin{enumerate}
+    \item Discard every domain containing fewer than a user-specified minimum number of bridge pairs (default 8).
+    \item If the user requested widening the domains (option \verb|--widen|), then grow each domain into the gaps on both sides of it, up to a total length of $L$.
+    Each interior gap is divided evenly between the two domains flanking it, with each domain limited by its own remaining length budget; any space that neither domain can absorb remains a gap.
+    Otherwise, discard every domain shorter than a user-specified minimum length (default 50~nt).
+    \item If the user requested filling the gaps (option \verb|--fill|), then insert a new domain into every remaining gap -- before the first domain, between each pair of consecutive domains, and after the last domain -- so that every position lies in exactly one domain.
+    Any gap longer than $L$ is divided into the fewest domains of as equal length as possible, none longer than $L$.
+\end{enumerate}
+
+
+\subsubsection{Clustering domains of bridge pairs}
+
+A CSV file listing the bridge pairs for each tile and a graph depicting all bridge pairs and domains are generated.
+The original tiles from the Filter step are erased, and the new domains are fed into the Filter step as regions, to generate a dataset for each domain.
+Finally, each domain is processed with the Cluster step to solve structure ensembles across the entire transcript.
+
+
+\subsection{Joining regions that have been clustered}
+
+\subsubsection{Solving the optimal matching of clusters from multiple regions}
+
+If $R$ regions were clustered with \verb|seismic cluster| and all produced the same number of clusters $K$, they can be joined with \verb|seismic join|.
+For each $k$ from 1 to $K$, a ``joined cluster" will be assembled, comprising one cluster from each region $r$.
+Because the number assigned to each cluster is arbitrary, the algorithm must determine how to assign each cluster from each region to exactly one joined cluster.
+
+For every pair of regions $r_1$ and $r_2$, the positions in the overlap ($J_{r_1r_2}$) between the regions are determined.
+For every combination of clusters $k_1$ from region $r_1$ and $k_2$ from region $r_2$, the sum of the arcsine distances (see ``\nameref{calc-arcsine-distance}") between the mutation rates ($\mu$) of the overlapping positions \textit{and} of the proportion ($\pi$) of each cluster is calculated as the ``cost" $C_{r_1r_2k_1k_2}$ of matching up the clusters:
+\begin{equation}
+    C_{r_1r_2k_1k_2} = ARCD(\pi_{k_1},\pi_{k_2}) + \sum_{j \in J_{r_1r_2}}{ARCD(\mu_{jk_1},\mu_{jk_2})}
+\end{equation}
+Including the proportion of each cluster ensures that $C_{abxy}$ is defined for every pair of regions with no overlapping positions, since every cluster has a proportion.
+Pairs of regions with less (or no) overlap influence the outcome of joining less than pairs of regions with more overlap because they have fewer arcsine distances to sum.
+
+After every cost $C_{r_1r_2k_1k_2}$ is calculated, a hypergraph $G$ is built in which every node $N_{rk}$ represents cluster $k$ in region $r$.
+Every hyperedge $E_{k_1k_2...k_R}$ connects $R$ nodes -- one node from each of the $R$ regions -- and represents the scenario in which the corresponding clusters from the regions are put into the same joined cluster.
+The weight $w_{k_1k_2...k_R}$ of each hyperedge is the sum of the costs of joining every pair of clusters in the hyperedge:
+\begin{equation}
+    w_{k_1k_2...k_R} = \sum_{r_1=1}^{R-1}{\sum_{r_2=r_1+1}^R{C_{r_1r_2k_{r_1}k_{r_2}}}}
+\end{equation}
+The weights are stacked as a column vector $\mathbf{w}$ with $K^R$ rows (the number of hyperedges).
+
+An incidence matrix $\mathbf{A}$ is then constructed with one row for each node $N_{rk}$ and one column for each hyperedge $E_{k_1k_2...k_R}$.
+Each element is 1 if the hyperedge (column) contains the node (row), otherwise 0.
+Because its dimensions are $RK$ rows by $K^R$ columns, $\mathbf{A}$ can be very large, so it is implemented as a sparse \verb|csr_matrix| in SciPy~\cite{Virtanen2020}.
+
+Then, the optimal combination of hyperedges $\mathbf{x}$ (a column vector with $K^R$ rows) is selected using an integer linear program to minimize the total weight:
+\begin{equation}
+    \min_{\mathbf{x} \in \{0, 1\}^{K^R}}{\mathbf{w^Tx}}
+\end{equation}
+subject to
+\begin{equation}
+    \mathbf{Ax} = \mathbf{1}
+\end{equation}
+which constrains every node (row of $\mathbf{A}$) to appear in exactly one hyperedge.
+The program is solved using the \verb|milp| function from the \verb|optimize| package of SciPy~\cite{Virtanen2020}.
+Because the joined clusters can be numbered arbitrarily, the convention is to copy the cluster numbering from the first region.
+Finally, the optimal way to match clusters from multiple regions is written into the report file.
+
+
+% Create the references section.
+\newpage
+\begin{singlespace}
+	\bibliographystyle{unsrt}
+	\bibliography{refs}
+\end{singlespace}
+
+
+\end{document}
